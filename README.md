@@ -10,19 +10,24 @@ You will need SDL 1.2.13 and freetype.
 ## How to play
 
 Up Arrow/W      -> rotates the current tetromino
+
 Left Arrow/A    -> moves the current tetromino to the left
+
 Right Arrow/D   -> moves the current tetromino to the right
+
 Down Arrow/S    -> speeds up the current tetromino
+
 Spacebar        -> zooms the current tetromino to the bottom
 
+
 New Game        -> starts new game
+
 Quit            -> quits
 
 ## To-do
 
-+ Update code for SDL2
++ Update code to SDL2
 + Add pause option
-+ Add initial screen menu
 
 # Credits
 
