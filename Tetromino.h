@@ -4,13 +4,6 @@
  * NOTE: The origin of the coordinate system is the upper-left point of the window
  */
 
-// SDL graphics library header files
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-
-// Music
-#include "SDL_mixer.h"
-
 // Put everything related to the tetromino like block coordinates, rotation, color, position, etc.
 class Tetromino { 
 

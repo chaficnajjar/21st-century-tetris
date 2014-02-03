@@ -6,6 +6,13 @@
  * NOTE: The origin of the coordinate system is the upper-left point of the window
  */
 
+// SDL graphics library header files
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+
+// Music
+#include "SDL_mixer.h"
+
 // Header file containing class definitions
 #include "Tetromino.h"
 #include <iostream>
