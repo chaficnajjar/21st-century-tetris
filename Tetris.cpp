@@ -70,9 +70,6 @@ int ScreenBPP       = 32;       // bits per pixel
    final drawing to screen (player won't see the rendering as it happens) */
 int ScreenFlags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER;
 
-SDL_Surface* screen = SDL_SetVideoMode(ScreenWidth, ScreenHeight, ScreenBPP, ScreenFlags);
-SDL_Event event;
-
 static const int NUMROWS = 30;  // Number of rows in board
 static const int NUMCOLS = 15;  // numbers of columns in board
 
@@ -127,6 +124,9 @@ void Initialize() {
     // Initialize audio, CD-ROM, event handling, file I/O, joystick handling, threading, timers and videos
     SDL_Init(SDL_INIT_EVERYTHING);
 
+    // Create window
+    SDL_Surface* screen = SDL_SetVideoMode(ScreenWidth, ScreenHeight, ScreenBPP, ScreenFlags);
+
     // NULL is where we put text which is the window title in menu bar when windows is minimized
     SDL_WM_SetCaption("Tetris", NULL); 
 
@@ -169,6 +169,7 @@ void Initialize() {
 void GetInput() {
 
     // Queuing events
+    SDL_Event event;
     while (SDL_PollEvent(&event)) { 
 
         // Clicking 'x' or pressing F4
