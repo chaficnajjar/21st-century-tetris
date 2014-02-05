@@ -90,7 +90,6 @@ Tetromino *next_tetro   = new Tetromino ( rand()%7, rand()%NCOLORS );       // n
 freetype::font_data game_font;  // holds font characteristics (eg: font size) 
 
 SDL_Window*     window;
-SDL_Renderer*   renderer;
 SDL_GLContext gl_context;
 
 void Initialize() {
@@ -118,11 +117,7 @@ void Initialize() {
             SDL_WINDOWPOS_UNDEFINED, 
             SCREEN_WIDTH,
             SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN| SDL_WINDOW_OPENGL );
-
-    renderer = SDL_CreateRenderer( window,
-            -1, 
-            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+            SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
 
     gl_context = SDL_GL_CreateContext(window);
 
@@ -659,7 +654,6 @@ void Execute() {
     } while(!done);
 
     SDL_GL_DeleteContext(gl_context);
-    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     
 }
