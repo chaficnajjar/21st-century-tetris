@@ -7,7 +7,10 @@ Tetris clone based on [QuantumKing's](https://github.com/QuantumKing) deleted pr
 
 ## Installation
 
-You will need SDL 1.2.13 and freetype.
+You will need
++ SDL 1.2.13
++ Freetype
++ [SDL_Mixer 2.0](http://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer.html)
 
 ## How to play
 
@@ -28,7 +31,7 @@ Quit            -> quits
 
 ## To-do
 
-+ Update code to SDL2
++ update code to SDL2
 + Add pause option
 
 # Credits
