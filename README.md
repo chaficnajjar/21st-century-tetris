@@ -31,7 +31,8 @@ Quit            -> quits
 
 ## To-do
 
-+ update code to SDL2
++ ~~update code to SDL2~~
++ Update to OpenGL 3.0
 + Add pause option
 
 # Credits
