@@ -1,25 +1,18 @@
 
 /*
  * Author: Chafic Najjar
- * Tetris game in SDL and OpenGL
- * To-do: Restart music when new game
+ * Tetris game written in C++ and uses SDL
  * NOTE: The origin of the coordinate system is the upper-left point of the window
  */
 
 #include "Tetromino.h"
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <SDL2/SDL_mixer.h>         // music
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>    // graphics
+#include <SDL2/SDL_mixer.h>     // music
+#include "FreeType.h"           // font
 
-#include <iostream>
-using namespace std;
-
-// For random values
-#include <ctime>
-
-// For font
-#include "FreeType.h"
+#include <ctime>                // random values
 
 int xoffset = 0;                //  0 (no movement)
                                 // -1 (tetromino will move left)
@@ -32,8 +25,6 @@ bool speedup        = false;    // true if 's' or 'down' was pressed, falls down
 
 bool newtetro       = false;    // true when last tetrimino has landed
 
-bool delete_row     = false;    // true when player fills a row
-
 bool newgamedown    = false;    // true when player presses "New Game" button
 bool newgameup      = false;    // true when player releases "New Game" button
 bool quitdown       = false;    // true when player presses "Quit" button 
@@ -42,6 +33,7 @@ bool quitup         = false;    // true when player releases "Quit" button
 bool gameover       = false;    // true when player looses
 bool done           = false;    // true when player exits game
 
+bool delete_row     = false;    // true when player fills a row
 int bonus           = 3;        // bonus given if bonus_counter = 4
 int bonus_counter   = 0;        // counts the number of consecutive row deletes
 int score           = 0;        // score (speed of fall is proportional to score)
@@ -56,19 +48,14 @@ float deltaTime     = 0.0f;     // thisTime - lastTime
 float time_till_drop= 0.3f;     // tetromino falls down 1 block every time_till_drop seconds 
 float time_counter  = 0.0f;     // counts number of game loops to allow tetromino to fall down  
 
-int ScreenWidth     = 500;      // screen resolution (width)
-int ScreenHeight    = 640;      // screen resolution (height)
 int GameWidth       = 300;      // board width
 int GameHeight      = 600;      // board height
-int ScreenBPP       = 32;       // bits per pixel
 
-// Use OpenGL alongside SDL and request double buffer
-/* Double buffer allows rendering to happen in the background and then rapidly swaps
-   final drawing to screen (player won't see the rendering as it happens) */
-int ScreenFlags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER;
+const int SCREEN_WIDTH  = 500;
+const int SCREEN_HEIGHT = 640;
 
-static const int NUMROWS = 30;  // Number of rows in board
-static const int NUMCOLS = 15;  // numbers of columns in board
+const int NUMROWS   = 30;       // Number of rows in board
+const int NUMCOLS   = 15;       // numbers of columns in board
 
 // This is the board, where dropped tetrominos live
 int board[NUMROWS][NUMCOLS];    // it's [y][x] not [x][y]
@@ -102,6 +89,9 @@ Tetromino *next_tetro   = new Tetromino ( rand()%7, rand()%NCOLORS );       // n
 
 freetype::font_data game_font;  // holds font characteristics (eg: font size) 
 
+SDL_Window*     window;
+SDL_Renderer*   renderer;
+
 void Initialize() {
 
     // At the start of the game:
@@ -122,12 +112,20 @@ void Initialize() {
     SDL_Init(SDL_INIT_EVERYTHING);
 
     // Create window
-    SDL_Surface* screen = SDL_SetVideoMode(ScreenWidth, ScreenHeight, ScreenBPP, ScreenFlags);
+    window = SDL_CreateWindow( "Tetris Unleashed!",
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED, 
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
+            SDL_WINDOW_SHOWN| SDL_WINDOW_OPENGL );
 
-    // NULL is where we put text which is the window title in menu bar when windows is minimized
-    SDL_WM_SetCaption("Tetris", NULL); 
+    renderer = SDL_CreateRenderer( window,
+            -1, 
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
-    // Sets up OpenGL double buffer
+
+    /* Double buffer allows rendering to happen in the background and then rapidly swaps
+    final drawing to screen (player won't see the rendering as it happens) */
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); 
 
     // Black background color
@@ -138,7 +136,7 @@ void Initialize() {
     glLoadIdentity();
 
     // Orthographic projection
-    glOrtho(0, ScreenWidth, ScreenHeight, 0, -1, 1);
+    glOrtho(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1, 1);
 
     // Modelview transformation matrix
     glMatrixMode( GL_MODELVIEW ); 
@@ -587,7 +585,7 @@ void Render() {
     if (gameover) {
         glLoadIdentity();
         glColor3f(1.0f, 0.0f, 0.0f);
-        freetype::print(game_font, newgamex1, ScreenHeight-newgamey1+4*blockWidth, "Game Over!");
+        freetype::print(game_font, newgamex1, SCREEN_HEIGHT-newgamey1+4*blockWidth, "Game Over!");
     }
 
     // Blue
@@ -596,7 +594,7 @@ void Render() {
     // Create "New Game" button
     CreateButton(newgamex1,newgamex2,newgamey1,newgamey2); //(left. right, up, down)
     glLoadIdentity();
-    freetype::print(game_font, newgamex1+0.3*blockWidth, ScreenHeight-newgamey2-1.4*blockHeight, "New Game");
+    freetype::print(game_font, newgamex1+0.3*blockWidth, SCREEN_HEIGHT-newgamey2-1.4*blockHeight, "New Game");
 
     // Red
     glColor3f(1.0f,0.0f,0.0f);
@@ -604,10 +602,10 @@ void Render() {
     // Create quit button
     CreateButton(newgamex1,newgamex2,newgamey1+4*blockHeight,newgamey2+4*blockHeight);
     glLoadIdentity();
-    freetype::print(game_font, newgamex1+2.1*blockWidth, ScreenHeight-newgamey1-3.4*blockHeight, "Quit");
+    freetype::print(game_font, newgamex1+2.1*blockWidth, SCREEN_HEIGHT-newgamey1-3.4*blockHeight, "Quit");
 
     // Swap buffers
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(window);
 
 }
 
@@ -658,7 +656,8 @@ void Execute() {
             done = true;
     } while(!done);
 
-    SDL_Quit();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
     
 }
 

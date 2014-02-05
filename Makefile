@@ -1,7 +1,7 @@
 CC = gcc -Wall -ansi
 SOURCE = Tetris.cpp FreeType.cpp
 FREETYPE_INCLUDE = /usr/include/freetype2
-FLAGS = -lGL -lGLU -lSDL_mixer -lfreetype `sdl-config --cflags --libs`
+FLAGS = -lSDL2 -lGL -lGLU -lSDL_mixer -lfreetype `sdl-config --cflags --libs`
 BINARY = tetris
 
 all:
