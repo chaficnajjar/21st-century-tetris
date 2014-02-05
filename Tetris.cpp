@@ -91,6 +91,7 @@ freetype::font_data game_font;  // holds font characteristics (eg: font size)
 
 SDL_Window*     window;
 SDL_Renderer*   renderer;
+SDL_GLContext gl_context;
 
 void Initialize() {
 
@@ -123,6 +124,7 @@ void Initialize() {
             -1, 
             SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
+    gl_context = SDL_GL_CreateContext(window);
 
     /* Double buffer allows rendering to happen in the background and then rapidly swaps
     final drawing to screen (player won't see the rendering as it happens) */
@@ -656,6 +658,7 @@ void Execute() {
             done = true;
     } while(!done);
 
+    SDL_GL_DeleteContext(gl_context);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     
