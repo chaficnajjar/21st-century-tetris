@@ -8,9 +8,8 @@
 #include "Tetromino.h"
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>    // graphics
-#include <SDL2/SDL_mixer.h>     // music
-#include "FreeType.h"           // font
+//#include <SDL2/SDL_mixer.h>   // music
+//#include "FreeType.h"         // font
 
 #include <ctime>                // random values
 
@@ -61,36 +60,36 @@ const int NUMCOLS   = 15;       // numbers of columns in board
 int board[NUMROWS][NUMCOLS];    // it's [y][x] not [x][y]
 
 // Width and height of a block of the board
-GLfloat blockWidth = GLfloat(GameWidth)/GLfloat(NUMCOLS);
-GLfloat blockHeight = GLfloat(GameHeight)/GLfloat(NUMROWS); 
+float blockWidth = float(GameWidth)/float(NUMCOLS);
+float blockHeight = float(GameHeight)/float(NUMROWS); 
 
 // Coordinates of the "New Game" button
 // Also used for "Quit" button
 float newgamex1 = gameoffset+GameWidth+blockWidth;       // left
 float newgamex2 = gameoffset+GameWidth+8*blockWidth;     // right
-float newgamey1 = GameHeight-4*blockHeight;              // up
-float newgamey2 = GameHeight-6*blockHeight;              // down
+float newgamey1 = GameHeight-4*blockHeight;              // down
+float newgamey2 = GameHeight-6*blockHeight;              // up
 
 
 const int NCOLORS = 6;          // number of colors
-const float colours[NCOLORS][3] = {
+const float colors[NCOLORS][4] = {
 
-     { 1.0f, 0.0f, 0.0f },      // red
-     { 0.0f, 1.0f, 0.0f },      // blue
-     { 0.0f, 0.0f, 1.0f },      // turquoise
-     { 1.0f, 1.0f, 0.0f },      // purple
-     { 0.0f, 1.0f, 1.0f },      // brown
-     { 1.0f, 0.0f, 1.0f }       // yellow
+     { 255, 0  , 0  , 255 },      // red
+     { 0  , 255, 0  , 255 },      // blue
+     { 0  , 0  , 255, 255 },      // turquoise
+     { 255, 255, 0  , 255 },      // purple
+     { 0  , 255, 255, 255 },      // brown
+     { 255, 0  , 255, 255 }       // yellow
 
 };
 
 Tetromino *tetro        = new Tetromino ( rand()%7, rand()%NCOLORS );       // current tetromino
 Tetromino *next_tetro   = new Tetromino ( rand()%7, rand()%NCOLORS );       // next tetromino
 
-freetype::font_data game_font;  // holds font characteristics (eg: font size) 
+//freetype::font_data game_font;  // holds font characteristics (eg: font size) 
 
 SDL_Window*     window;
-SDL_GLContext gl_context;
+SDL_Renderer*   renderer;
 
 void Initialize() {
 
@@ -117,42 +116,24 @@ void Initialize() {
             SDL_WINDOWPOS_UNDEFINED, 
             SCREEN_WIDTH,
             SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
+            SDL_WINDOW_SHOWN );
 
-    gl_context = SDL_GL_CreateContext(window);
+    // Create renderer
+    renderer = SDL_CreateRenderer( window,
+            -1, 
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
-    /* Double buffer allows rendering to happen in the background and then rapidly swaps
-    final drawing to screen (player won't see the rendering as it happens) */
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); 
-
-    // Black background color
-    glClearColor( 0.0, 0.0, 0.0, 1.0 ); 
-
-    // Projection matrix
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    // Orthographic projection
-    glOrtho(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1, 1);
-
-    // Modelview transformation matrix
-    glMatrixMode( GL_MODELVIEW ); 
-    glLoadIdentity();
-
-    // Font and font size
-    // http://www.urbanfonts.com/fonts/Bitwise.htm
-    game_font.init("bitwise.ttf", 19);
 
     // Music
-    int audio_rate = 26000;                 // soundtrack speed
+    //int audio_rate = 26000;                 // soundtrack speed
 
-    Uint16 audio_format = AUDIO_S16SYS;     
-    int audio_channels = 1;
-    int audio_buffers = 4096;
-    Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers);
-    Mix_Music *music = Mix_LoadMUS("Tetris.mp3");
+    //Uint16 audio_format = AUDIO_S16SYS;     
+    //int audio_channels = 1;
+    //int audio_buffers = 4096;
+    //Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers);
+    //Mix_Music *music = Mix_LoadMUS("Tetris.mp3");
 
-    Mix_PlayMusic(music, -1);               // play music an infinite amount of time
+    //Mix_PlayMusic(music, -1);               // play music an infinite amount of time
 
 }
 
@@ -268,6 +249,7 @@ void GetInput() {
 // Update game values
 void Update() { 
 
+    // Get number of milliseconds since SDL_Init() of the previous frame
     lastTime = thisTime; 
 
     // Get number of milliseconds since SDL_Init()
@@ -452,59 +434,47 @@ void Update() {
 }
 
 // Create "New Game" and "Quit" buttons
-void CreateButton(float x1, float x2, float y1, float y2) { // (left, right, up, down)
+void CreateButton(int x, int y, int width, int height, int k) {
 
-        glBegin( GL_QUADS );
-            glVertex3f( x1, y1, 0 );                // left up
-            glVertex3f( x1, y2, 0 );                // left down
-            glVertex3f( x2, y2, 0 );                // right down
-            glVertex3f( x2, y1, 0 );                // right up
-        glEnd();
-
-        glColor3f(1.0f,1.0f,1.0f);
+        SDL_Rect rect = { x, y, width, height };
+        SDL_SetRenderDrawColor(renderer, colors[k][0], colors[k][1], colors[k][2], colors[k][3]);
+        SDL_RenderFillRect(renderer, &rect);
 
 }
 
 // Render Tetromino block
-void DrawBlock() {
+void DrawBlock(int x, int y, int k) {
 
-    glBegin( GL_QUADS ); 
-        glVertex3f( 0, 0, 0 );                      // up left
-        glVertex3f( blockWidth, 0, 0 );             // up right
-        glVertex3f( blockWidth, blockHeight, 0 );   // down right
-        glVertex3f( 0, blockHeight, 0 );            // down left
-    glEnd();
+    SDL_Rect block = {x, y, blockWidth, blockHeight};
+    SDL_SetRenderDrawColor(renderer, colors[k][0], colors[k][1], colors[k][2], colors[k][3]);
+    SDL_RenderFillRect(renderer, &block);
 
 }
 
 // Render result
 void Render() {
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    // Clear screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
+    SDL_RenderClear(renderer);
 
     // White
-    glColor3f(1.0f, 1.0f, 1.0f);
+    //glColor3f(1.0f, 1.0f, 1.0f);
 
     // Write text
-    freetype::print(game_font, (next_tetro->X-3)*blockWidth, GameHeight+gameoffset-blockHeight, "TETRIS\n\nSCORE: %d", score); 
-    freetype::print(game_font, (next_tetro->X-3)*blockWidth, (NUMROWS-next_tetro->Y+4)*blockHeight, "Next Piece:");
+    //freetype::print(game_font, (next_tetro->X-3)*blockWidth, GameHeight+gameoffset-blockHeight, "TETRIS\n\nSCORE: %d", score); 
+    //freetype::print(game_font, (next_tetro->X-3)*blockWidth, (NUMROWS-next_tetro->Y+4)*blockHeight, "Next Piece:");
+
+    int tetro_x, tetro_y;
 
     // Draw tetromino squares
     for (int i = 0; i < tetro->SIZE; i++) {
 
-        // (x, y, z) coordinates of the translation vector
-        glTranslatef( GLfloat(tetro->GetBlockX(i))*blockWidth + gameoffset,
-                      GLfloat(tetro->GetBlockY(i))*blockHeight + gameoffset,
-                      0 ); 
+        // Get new coordinates
+        tetro_x = float(tetro->GetBlockX(i))*blockWidth + gameoffset;
+        tetro_y = float(tetro->GetBlockY(i))*blockHeight + gameoffset;
 
-        // Preserve color
-        int k = tetro->color;
-        glColor3f(colours[k][0], colours[k][1], colours[k][2]);
-
-        DrawBlock();
-
-        // Resets matrix modified by translation
-        glLoadIdentity(); 
+        DrawBlock(tetro_x, tetro_y, tetro->color);
 
     }
 
@@ -513,19 +483,13 @@ void Render() {
         // Draw next tetromino
         for (int i = 0; i < next_tetro->SIZE; i++) {
 
-            // (x, y, z) coordinates of the translation vector
-            glTranslatef( GLfloat(next_tetro->GetBlockX(i))*blockWidth,
-                          GLfloat(next_tetro->GetBlockY(i))*blockHeight,
-                          0 );
 
-            // Preserve color
-            int k = next_tetro->color; 
-            glColor3f(colours[k][0], colours[k][1], colours[k][2]);
+            // Get new coordinates
+            tetro_x = float(next_tetro->GetBlockX(i))*blockWidth;
+            tetro_y = float(next_tetro->GetBlockY(i))*blockHeight;
 
-            DrawBlock();
+            DrawBlock(tetro_x, tetro_y, next_tetro->color);
 
-            // Resets matrix modified by translation
-            glLoadIdentity();
         }
 
     // This is the board. Non-active tetrominos live here.
@@ -534,75 +498,64 @@ void Render() {
 
             if (board[i][j]!=-1) {
 
-                // (x, y, z) coordinates of the translation vector
-                glTranslatef( GLfloat(j)*blockWidth + gameoffset,
-                              GLfloat(i)*blockHeight + gameoffset,
-                              0 );
 
-                // Preserve color
-                int k = board[i][j]; 
-                glColor3f(colours[k][0], colours[k][1], colours[k][2]);
+                // Get new coordinates
+                tetro_x = float(j)*blockWidth + gameoffset;
+                tetro_y = float(i)*blockHeight + gameoffset;
 
-                DrawBlock();
+                DrawBlock(tetro_x, tetro_y, board[i][j]);
 
-                // Resets matrix modified by translation
-                glLoadIdentity();
             }
 
+    
     // Box surrounding board
-    // Blue
-    glColor3f(0.0f,0.0f,1.0f);
+
+    // Set color to blue
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
     // Draw left border
-    glBegin(GL_LINES);
-        glVertex3f(gameoffset, gameoffset, 0);
-        glVertex3f(gameoffset, gameoffset+GameHeight, 0);
-    glEnd();
+    SDL_RenderDrawLine(renderer, gameoffset, gameoffset, gameoffset, gameoffset+GameHeight);
 
     // Draw right border
-    glBegin(GL_LINES);
-        glVertex3f(gameoffset+GameWidth, gameoffset, 0);
-        glVertex3f(gameoffset+GameWidth, gameoffset+GameHeight, 0);
-    glEnd();
+    SDL_RenderDrawLine(renderer, gameoffset+GameWidth, gameoffset, gameoffset+GameWidth, gameoffset+GameHeight);
 
     // Draw upper border
-    glBegin(GL_LINES);
-        glVertex3f(gameoffset, gameoffset, 0);
-        glVertex3f(gameoffset+GameWidth, gameoffset, 0);
-    glEnd();
+    SDL_RenderDrawLine(renderer, gameoffset, gameoffset, gameoffset+GameWidth, gameoffset);
 
     // Draw bottom border
-    glBegin(GL_LINES);
-        glVertex3f(gameoffset, gameoffset+GameHeight, 0);
-        glVertex3f(gameoffset+GameWidth, gameoffset+GameHeight, 0);
-    glEnd();
-
+    SDL_RenderDrawLine(renderer, gameoffset, gameoffset+GameHeight, gameoffset+GameWidth, gameoffset+GameHeight);
 
     // If game is over, display "Game Over!"
-    if (gameover) {
-        glLoadIdentity();
-        glColor3f(1.0f, 0.0f, 0.0f);
-        freetype::print(game_font, newgamex1, SCREEN_HEIGHT-newgamey1+4*blockWidth, "Game Over!");
-    }
+    //if (gameover) {
+        //glLoadIdentity();
+        //glColor3f(1.0f, 0.0f, 0.0f);
+        //freetype::print(game_font, newgamex1, SCREEN_HEIGHT-newgamey1+4*blockWidth, "Game Over!");
+    //}
 
     // Blue
-    glColor3f(0.0f,0.0f,1.0f);
+    //glColor3f(0.0f,0.0f,1.0f);
 
     // Create "New Game" button
-    CreateButton(newgamex1,newgamex2,newgamey1,newgamey2); //(left. right, up, down)
-    glLoadIdentity();
-    freetype::print(game_font, newgamex1+0.3*blockWidth, SCREEN_HEIGHT-newgamey2-1.4*blockHeight, "New Game");
+    //CreateButton(newgamex1,newgamex2,newgamey1,newgamey2); //(left. right, up, down)
+    //glLoadIdentity();
+    //freetype::print(game_font, newgamex1+0.3*blockWidth, SCREEN_HEIGHT-newgamey2-1.4*blockHeight, "New Game");
+
+    // Create "New Game" button
+    CreateButton(newgamex1, newgamey2, 7*blockWidth, 2*blockHeight, 1);
 
     // Red
-    glColor3f(1.0f,0.0f,0.0f);
+    //glColor3f(1.0f,0.0f,0.0f);
 
     // Create quit button
-    CreateButton(newgamex1,newgamex2,newgamey1+4*blockHeight,newgamey2+4*blockHeight);
-    glLoadIdentity();
-    freetype::print(game_font, newgamex1+2.1*blockWidth, SCREEN_HEIGHT-newgamey1-3.4*blockHeight, "Quit");
+    //CreateButton(newgamex1,newgamex2,newgamey1+4*blockHeight,newgamey2+4*blockHeight);
+    //glLoadIdentity();
+    //freetype::print(game_font, newgamex1+2.1*blockWidth, SCREEN_HEIGHT-newgamey1-3.4*blockHeight, "Quit");
+
+    // Create "Quit" button
+    CreateButton(newgamex1, newgamey2+4*blockHeight, 7*blockWidth, 2*blockHeight, 0);
 
     // Swap buffers
-    SDL_GL_SwapWindow(window);
+    SDL_RenderPresent(renderer);
 
 }
 
@@ -645,6 +598,7 @@ void Execute() {
         GetInput();
         Update();
         Render();
+        //SDL_Delay(1);
 
         if(newgameup && newgamedown)
             SetUpNewGame();             
@@ -653,7 +607,7 @@ void Execute() {
             done = true;
     } while(!done);
 
-    SDL_GL_DeleteContext(gl_context);
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     
 }
