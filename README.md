@@ -8,9 +8,8 @@ Tetris clone based on [QuantumKing's](https://github.com/QuantumKing) deleted pr
 ## Installation
 
 You will need
-+ SDL 1.2.13
-+ Freetype
-+ [SDL_Mixer 2.0](http://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer.html)
++ [SDL 2.0.1](http://www.libsdl.org/)
++ [SDL_ttf 2.0](http://www.libsdl.org/projects/SDL_ttf/)
 
 ## How to play
 
@@ -42,5 +41,10 @@ Quit            -> quits
 This project is based on [QuantumKing's](https://github.com/QuantumKing) now deleted project. 
 
 Restructuring and modifications by Chafic Najjar - chafic.najjar@gmail.com
-
-
++ Added all comments
++ Removed Tetris class, re-organized all variables and shortened code 
++ Added support for W/A/S/D keys
++ Fixed bug that didn't allow continuously shifting the tetromino left or right
++ Increased game speed
++ Replaced legacy OpenGL and SDL1.2 with pure SDL 2.0 implementation
++ Replaced FreeType with SDL2_tff
