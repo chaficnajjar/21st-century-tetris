@@ -6,10 +6,11 @@
  */
 
 #include "Tetromino.h"
-
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 //#include <SDL2/SDL_mixer.h>   // music
-//#include "FreeType.h"         // font
+#include <iostream>
+using namespace std;
 
 #include <ctime>                // random values
 
@@ -36,6 +37,7 @@ bool delete_row     = false;    // true when player fills a row
 int bonus           = 3;        // bonus given if bonus_counter = 4
 int bonus_counter   = 0;        // counts the number of consecutive row deletes
 int score           = 0;        // score (speed of fall is proportional to score)
+bool render_score   = false;
 
 float gameoffset    = 20.0f;    // space between board border and window border
 
@@ -86,10 +88,46 @@ const float colors[NCOLORS][4] = {
 Tetromino *tetro        = new Tetromino ( rand()%7, rand()%NCOLORS );       // current tetromino
 Tetromino *next_tetro   = new Tetromino ( rand()%7, rand()%NCOLORS );       // next tetromino
 
-//freetype::font_data game_font;  // holds font characteristics (eg: font size) 
-
 SDL_Window*     window;
 SDL_Renderer*   renderer;
+SDL_Color       font_color = { 255, 255, 255 };
+SDL_Texture*    font_image_tetris;         
+SDL_Texture*    font_image_score_text;
+SDL_Texture*    font_image_score;
+SDL_Texture*    font_image_new_game;
+SDL_Texture*    font_image_quit;
+SDL_Texture*    font_image_game_over; 
+ 
+void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr) {
+    SDL_RenderCopy(ren, tex, clip, &dst);
+}
+
+void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip = nullptr) {
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    if (clip != nullptr){
+        dst.w = clip->w;
+        dst.h = clip->h;
+    }
+
+    else
+        SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+
+    renderTexture(tex, ren, dst, clip);
+}
+
+SDL_Texture* renderText(const string &message, const string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
+    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
+
+    SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
+
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
+
+    SDL_FreeSurface(surf);
+    TTF_CloseFont(font);
+    return texture;
+}
 
 void Initialize() {
 
@@ -123,6 +161,16 @@ void Initialize() {
             -1, 
             SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
+    // Font
+    TTF_Init();
+
+    // Write text
+    font_image_tetris = renderText("Tetris Unleashed!", "bitwise.ttf", font_color, 16, renderer);
+    font_image_score_text = renderText("Score: ", "bitwise.ttf", font_color, 20, renderer);
+    font_image_score = renderText(to_string(score), "bitwise.ttf", font_color, 20, renderer);
+    font_image_new_game = renderText("New game", "bitwise.ttf", font_color, 20, renderer);
+    font_image_quit = renderText("Quit", "bitwise.ttf", font_color, 20, renderer);
+    font_image_game_over = renderText("Game over!", "bitwise.ttf", font_color, 16, renderer);
 
     // Music
     //int audio_rate = 26000;                 // soundtrack speed
@@ -411,6 +459,7 @@ void Update() {
         if (delete_row) {
             score++;                    // increment score
             bonus_counter++;            // increment bonus counter 
+            render_score = true;
         }
 
         else 
@@ -445,7 +494,7 @@ void CreateButton(int x, int y, int width, int height, int k) {
 // Render Tetromino block
 void DrawBlock(int x, int y, int k) {
 
-    SDL_Rect block = {x, y, blockWidth, blockHeight};
+    SDL_Rect block = {x, y, int(blockWidth), int(blockHeight)};
     SDL_SetRenderDrawColor(renderer, colors[k][0], colors[k][1], colors[k][2], colors[k][3]);
     SDL_RenderFillRect(renderer, &block);
 
@@ -458,13 +507,22 @@ void Render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
     SDL_RenderClear(renderer);
 
-    // White
-    //glColor3f(1.0f, 1.0f, 1.0f);
 
-    // Write text
-    //freetype::print(game_font, (next_tetro->X-3)*blockWidth, GameHeight+gameoffset-blockHeight, "TETRIS\n\nSCORE: %d", score); 
-    //freetype::print(game_font, (next_tetro->X-3)*blockWidth, (NUMROWS-next_tetro->Y+4)*blockHeight, "Next Piece:");
+    int x = (next_tetro->X-3)*blockWidth; 
+    int y = gameoffset; 
 
+    renderTexture(font_image_tetris, renderer, x, y);
+
+    // Render score text
+    renderTexture(font_image_score_text, renderer, x, y + blockWidth);
+
+    // Render score
+    if (render_score) {
+        font_image_score = renderText(to_string(score), "bitwise.ttf", font_color, 20, renderer);
+        render_score = false;
+    }
+    renderTexture(font_image_score, renderer, x + 60, y + blockWidth);
+    
     int tetro_x, tetro_y;
 
     // Draw tetromino squares
@@ -526,33 +584,20 @@ void Render() {
     SDL_RenderDrawLine(renderer, gameoffset, gameoffset+GameHeight, gameoffset+GameWidth, gameoffset+GameHeight);
 
     // If game is over, display "Game Over!"
-    //if (gameover) {
-        //glLoadIdentity();
-        //glColor3f(1.0f, 0.0f, 0.0f);
-        //freetype::print(game_font, newgamex1, SCREEN_HEIGHT-newgamey1+4*blockWidth, "Game Over!");
-    //}
-
-    // Blue
-    //glColor3f(0.0f,0.0f,1.0f);
+    if (gameover)
+        renderTexture(font_image_game_over, renderer, newgamex1, SCREEN_HEIGHT-newgamey1+4*blockWidth);
 
     // Create "New Game" button
-    //CreateButton(newgamex1,newgamex2,newgamey1,newgamey2); //(left. right, up, down)
-    //glLoadIdentity();
-    //freetype::print(game_font, newgamex1+0.3*blockWidth, SCREEN_HEIGHT-newgamey2-1.4*blockHeight, "New Game");
+    CreateButton(newgamex1, newgamey2, 7*blockWidth, 2*blockHeight, 2);
 
-    // Create "New Game" button
-    CreateButton(newgamex1, newgamey2, 7*blockWidth, 2*blockHeight, 1);
-
-    // Red
-    //glColor3f(1.0f,0.0f,0.0f);
-
-    // Create quit button
-    //CreateButton(newgamex1,newgamex2,newgamey1+4*blockHeight,newgamey2+4*blockHeight);
-    //glLoadIdentity();
-    //freetype::print(game_font, newgamex1+2.1*blockWidth, SCREEN_HEIGHT-newgamey1-3.4*blockHeight, "Quit");
+    // Render "New Game" font
+    renderTexture(font_image_new_game, renderer, newgamex1+10, newgamey2+10);
 
     // Create "Quit" button
     CreateButton(newgamex1, newgamey2+4*blockHeight, 7*blockWidth, 2*blockHeight, 0);
+
+    // Render "Quit" font
+    renderTexture(font_image_quit, renderer, newgamex1+10, newgamey2+4*blockHeight+10);
 
     // Swap buffers
     SDL_RenderPresent(renderer);
@@ -567,6 +612,7 @@ void SetUpNewGame() {
             board[i][j] = -1; 
 
     score = 0;
+    render_score = true;
 
     // release allocated memory
     delete [] tetro;
@@ -605,11 +651,20 @@ void Execute() {
 
         if(quitup && quitdown)
             done = true;
+
     } while(!done);
+
+    SDL_DestroyTexture(font_image_tetris);
+    SDL_DestroyTexture(font_image_score_text);
+    SDL_DestroyTexture(font_image_score);
+    SDL_DestroyTexture(font_image_new_game);
+    SDL_DestroyTexture(font_image_quit);
+    SDL_DestroyTexture(font_image_game_over);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    
+    SDL_Quit();
+
 }
 
 int main(int argc, char *argv[]) {

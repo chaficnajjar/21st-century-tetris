@@ -31,9 +31,11 @@ Quit            -> quits
 
 ## To-do
 
-+ ~~update code to SDL2~~
-+ Update to OpenGL 3.0
++ ~~Update code to SDL2~~
++ ~~Add fonts with SDL_ttf~~
++ Add music
 + Add pause option
++ Add fullscreen option 
 
 # Credits
 

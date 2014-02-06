@@ -1,13 +1,13 @@
-CC = gcc -Wall -ansi
-SOURCE = Tetris.cpp FreeType.cpp
-FREETYPE_INCLUDE = /usr/include/freetype2
-FLAGS = -lSDL2 -lGL -lGLU -lSDL_mixer -lfreetype `sdl-config --cflags --libs`
+GCC = g++
+SOURCE = Tetris.cpp
+SDL_LIB = -L/usr/local/lib -lSDL2 -lSDL2_ttf -Wl,-rpath=/usr/local/lib `sdl2-config --cflags --libs`
+SDL_INCLUDE = -I/usr/local/include
+GCCFLAGS = -Wall -ansi -std=c++0x $(SDL_INCLUDE)
+LDFLAGS = $(SDL_LIB)
 BINARY = tetris
 
-all:
-	$(CC) $(SOURCE) -o $(BINARY) $(FLAGS) -I$(FREETYPE_INCLUDE)
+all: 
+	$(GCC) $(SOURCE) $(GCCFLAGS) $(LDFLAGS) -o $(BINARY)
 
 clean:
-	@echo Cleaning up...
-	@rm $(BINARY)
-	@echo Done.
+	rm *.o && rm $(BINARY)
