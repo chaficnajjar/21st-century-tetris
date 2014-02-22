@@ -35,6 +35,9 @@ Quit            -> quits
 + Add music
 + Add pause option
 + Add fullscreen option 
++ Add tetrimino shadow
++ Add mouse control
++ Add menu screen
 
 # Credits
 
