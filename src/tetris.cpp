@@ -5,7 +5,7 @@
  * NOTE: The origin of the coordinate system is the upper-left point of the window
  */
 
-#include "Tetromino.h"
+#include "tetromino.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 //#include <SDL2/SDL_mixer.h>   // music
@@ -165,12 +165,12 @@ void Initialize() {
     TTF_Init();
 
     // Write text
-    font_image_tetris = renderText("Tetris Unleashed!", "bitwise.ttf", font_color, 16, renderer);
-    font_image_score_text = renderText("Score: ", "bitwise.ttf", font_color, 20, renderer);
-    font_image_score = renderText(to_string(score), "bitwise.ttf", font_color, 20, renderer);
-    font_image_new_game = renderText("New game", "bitwise.ttf", font_color, 20, renderer);
-    font_image_quit = renderText("Quit", "bitwise.ttf", font_color, 20, renderer);
-    font_image_game_over = renderText("Game over!", "bitwise.ttf", font_color, 16, renderer);
+    font_image_tetris = renderText("Tetris Unleashed!", "resources/fonts/bitwise.ttf", font_color, 16, renderer);
+    font_image_score_text = renderText("Score: ", "resources/fonts/bitwise.ttf", font_color, 20, renderer);
+    font_image_score = renderText(to_string(score), "resources/fonts/bitwise.ttf", font_color, 20, renderer);
+    font_image_new_game = renderText("New game", "resources/fonts/bitwise.ttf", font_color, 20, renderer);
+    font_image_quit = renderText("Quit", "resources/fonts/bitwise.ttf", font_color, 20, renderer);
+    font_image_game_over = renderText("Game over!", "resources/fonts/bitwise.ttf", font_color, 16, renderer);
 
     // Music
     //int audio_rate = 26000;                 // soundtrack speed
