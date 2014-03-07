@@ -518,7 +518,7 @@ void Render() {
 
     // Render score
     if (render_score) {
-        font_image_score = renderText(to_string(score), "bitwise.ttf", font_color, 20, renderer);
+        font_image_score = renderText(to_string(score), "resources/fonts/bitwise.ttf", font_color, 20, renderer);
         render_score = false;
     }
     renderTexture(font_image_score, renderer, x + 60, y + blockWidth);
