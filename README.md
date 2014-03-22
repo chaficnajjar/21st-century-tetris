@@ -32,6 +32,7 @@ Quit            -> quits
 
 + ~~Update code to SDL2~~
 + ~~Add fonts with SDL_ttf~~
++ Convert to OOP
 + Add music
 + Add pause option
 + Add fullscreen option 
