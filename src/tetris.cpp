@@ -237,19 +237,23 @@ void Tetris::input() {
     }
 }
 
+void frame_rate(float *lastTime, float *thisTime, float *deltaTime) {
+
+    // Get number of milliseconds since SDL_Init() of the previous frame
+    *lastTime = *thisTime; 
+
+    // Get number of milliseconds since SDL_Init()
+    *thisTime = SDL_GetTicks(); 
+
+    // Variation of time between each game loop
+    *deltaTime = (*thisTime - *lastTime) / 1000.0;         // dividing by 1000 to convert in seconds
+
+}
+
 // Update game values
 void Tetris::update() { 
 
-    /* PUT THIS IN ONE FUNCTION THAT RETURNS deltaTime*/
-
-    // Get number of milliseconds since SDL_Init() of the previous frame
-    lastTime = thisTime; 
-
-    // Get number of milliseconds since SDL_Init()
-    thisTime = SDL_GetTicks(); 
-
-    // Variation of time between each game loop
-    deltaTime = (thisTime - lastTime) / 1000.0;         // dividing by 1000 to convert in seconds
+    frame_rate(&lastTime, &thisTime, &deltaTime);
 
     // No gameover (tetromino hasn't crossed the top border)
     if (!gameover) { 
@@ -263,7 +267,6 @@ void Tetris::update() {
 
                 x = tetro->get_block_x(i);
                 y = tetro->get_block_y(i);
-                std::cout << y << std::endl;
 
                 // If any block touches the top border of the board, then it's game over
                 if (y <= 0) { 
