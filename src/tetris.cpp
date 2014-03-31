@@ -1,11 +1,12 @@
 
 /*
  * Author: Chafic Najjar
- * Tetris game written in C++ and uses SDL
+ * Tetris game written in C++ using SDL 2.0
  */
 
 #include "tetris.hpp"
 #include "tetromino.hpp"
+#include "board.hpp"
 #include "utilities.hpp"
 
 #include <random>
@@ -40,13 +41,12 @@ Tetris::Tetris(int argc, char *argv[]) {
             SCREEN_HEIGHT,
             SDL_WINDOW_SHOWN );
 
-    renderer = SDL_CreateRenderer( window,
-            -1, 
-            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+    renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
     /* Game objects */
-    tetro        = new Tetromino ( rand()%7, rand()%NCOLORS );       // current tetromino
-    next_tetro   = new Tetromino ( rand()%7, rand()%NCOLORS );       // next tetromino
+    board        = new Board();
+    tetro        = new Tetromino( rand()%7, rand()%NCOLORS );       // current tetromino
+    next_tetro   = new Tetromino( rand()%7, rand()%NCOLORS );       // next tetromino
 
     /* Sounds */
 
@@ -85,48 +85,34 @@ Tetris::Tetris(int argc, char *argv[]) {
     bonus           = 3; 
     bonus_counter   = 0;
     score           = 0;
-    render_score   = false;
+    render_score   = true;
 
     gameoffset    = 20.0f;
 
     acceleration  = 0.005f;
 
-    thisTime      = 0.0f;
-    lastTime      = 0.0f;
-    deltaTime     = 0.0f;
+    this_time      = 0.0f;
+    last_time      = 0.0f;
+    delta_time     = 0.0f;
     time_till_drop= 0.3f;
     time_counter  = 0.0f;
 
-    game_width       = 300;
-    game_height      = 600;
-
-    // Width and height of a block of the board
-    blockWidth = float(game_width)/float(NUMCOLS);
-    blockHeight = float(game_height)/float(NUMROWS); 
-
     // Coordinates of the "New Game" button
     // Also used for "Quit" button
-    newgamex1 = gameoffset+game_width+blockWidth;       // left
-    newgamex2 = gameoffset+game_width+8*blockWidth;     // right
-    newgamey1 = game_height-4*blockHeight;              // down
-    newgamey2 = game_height-6*blockHeight;              // up
+    newgamex1 = gameoffset+board->WIDTH+board->BLOCK_WIDTH;       // left
+    newgamex2 = gameoffset+board->WIDTH+8*board->BLOCK_WIDTH;     // right
+    newgamey1 = board->HEIGHT-4*board->BLOCK_HEIGHT;              // down
+    newgamey2 = board->HEIGHT-6*board->BLOCK_HEIGHT;              // up
 
 
     // At the start of the game:
     // x position of (0, 0) block of tetro is int(15/2) = 7 which is the exact horizontal middle of board
     // y position of (0, 0) block of tetro is 0 which is the top of the board
-    tetro->set_position(int(NUMCOLS/2), 0);
+    tetro->set_position(int(board->NUMCOLS/2), 0);
 
     // Position next_tetro at the upper right of the window, outside of the board
-    next_tetro->set_position(NUMCOLS+5,int(0.3*NUMROWS)); 
+    next_tetro->set_position(board->NUMCOLS+5,int(0.3*board->NUMROWS)); 
 
-
-    /* Board information */
-    // No blocks on the board
-    for (int i = 0; i < NUMROWS; i++)
-        for (int j = 0; j < NUMCOLS; j++)
-            board[i][j] = -1;               // Note: board[y][x] not board [x][y]
-                                            // -1 stands for "No color"
 }
  
 // Get player input
@@ -185,7 +171,7 @@ void Tetris::input() {
         if (event.type == SDL_MOUSEMOTION) {
 
             // Outside of the board
-            if (event.motion.x > game_width + gameoffset) 
+            if (event.motion.x > board->WIDTH + gameoffset) 
                 SDL_ShowCursor(1);          // show cursor
             
             // Inside the board
@@ -206,7 +192,7 @@ void Tetris::input() {
                             newgamedown = true;
 
                         // And mouse cursor is on "Quit" button
-                        else if (event.button.y > newgamey2+4*blockHeight && event.button.y < newgamey1+4*blockHeight)
+                        else if (event.button.y > newgamey2+4*board->BLOCK_HEIGHT && event.button.y < newgamey1+4*board->BLOCK_HEIGHT)
                             quitdown = true;
                     }
                     break;
@@ -227,7 +213,7 @@ void Tetris::input() {
                             newgameup = true;
 
                         // And mouse cursor is on "Quit" button
-                        else if (event.button.y > newgamey2+4*blockHeight && event.button.y < newgamey1+4*blockHeight)
+                        else if (event.button.y > newgamey2+4*board->BLOCK_HEIGHT && event.button.y < newgamey1+4*board->BLOCK_HEIGHT)
                             quitup = true;
                     }
                     break;
@@ -237,23 +223,10 @@ void Tetris::input() {
     }
 }
 
-void frame_rate(float *lastTime, float *thisTime, float *deltaTime) {
-
-    // Get number of milliseconds since SDL_Init() of the previous frame
-    *lastTime = *thisTime; 
-
-    // Get number of milliseconds since SDL_Init()
-    *thisTime = SDL_GetTicks(); 
-
-    // Variation of time between each game loop
-    *deltaTime = (*thisTime - *lastTime) / 1000.0;         // dividing by 1000 to convert in seconds
-
-}
-
 // Update game values
 void Tetris::update() { 
 
-    frame_rate(&lastTime, &thisTime, &deltaTime);
+    frame_rate(&last_time, &this_time, &delta_time);
 
     // No gameover (tetromino hasn't crossed the top border)
     if (!gameover) { 
@@ -274,17 +247,17 @@ void Tetris::update() {
                     return; 
                 }
 
-                board[y][x] = tetro->color; // update color in corresponding block position
+                board->color[y][x] = tetro->color; // update color in corresponding block position
 
             }
 
             // New tetromino
-            Tetromino *new_tetro = new Tetromino(rand()%7, rand()%NCOLORS);        // assign random type and color to new tetromino
-            new_tetro->set_position(next_tetro->X, next_tetro->Y);       // new tetrominoe is positioned under "Next Piece"
+            Tetromino *new_tetro = new Tetromino(rand()%7, rand()%NCOLORS); // assign random type and color to new tetromino
+            new_tetro->set_position(next_tetro->X, next_tetro->Y);          // new tetrominoe is positioned under "Next Piece"
 
             delete [] tetro;                        // delete allocated memory
             tetro = next_tetro;                     // update falling tetromino
-            tetro->set_position(int(NUMCOLS/2), 0);  // position the newly falling tetromino
+            tetro->set_position(int(board->NUMCOLS/2), 0);  // position the newly falling tetromino
             next_tetro = new_tetro;                 // update next_tetro to point to tetromino under "Next Piece"
             launch_tetro = false;                       // old falling tetromino has landed and new tetromino has already been generated
             zoom_down = false;                       // previous tetromino has landed so zoom_down is necessarly false
@@ -300,10 +273,10 @@ void Tetris::update() {
             // Update tetromino position on the x-axis
             tetro->X += xoffset; 
 
-            time_counter += deltaTime;
+            time_counter += delta_time;
 
             // time_till_drop = 0.3;
-            // deltaTime ~ 0.017 seconds
+            // delta_time ~ 0.017 seconds
             // Tetromino falls one block for every 0.3/0.017 = 17 game loops
             if (time_counter >= time_till_drop) { 
                 tetro->Y++; 
@@ -336,7 +309,7 @@ void Tetris::update() {
             y = tetro->get_block_y(i); 
 
             // Block crosses wall after rotation or translation 
-            if (x < 0 || x >= NUMCOLS) {
+            if (x < 0 || x >= board->NUMCOLS) {
 
                 // If it exceeds the wall because of rotation
                 if (rotate_left) 
@@ -348,16 +321,16 @@ void Tetris::update() {
             }
 
             // Block bypasses top border of the board 
-            else if (y >= NUMROWS) {
+            else if (y >= board->NUMROWS) {
                 launch_tetro = true;                // cast a new tetrimino
-                tetro->set_block_y(i, NUMROWS-1); // change the value of Y so that block(s) of the (old) tetromino is/are above the blue line
+                tetro->set_block_y(i, board->NUMROWS-1); // change the value of Y so that block(s) of the (old) tetromino is/are above the blue line
             }
 
             // Block is on the board
             else if (y >= 0) 
 
                 // Block touched another block
-                if (board[y][x] != -1) { 
+                if (board->color[y][x] != -1) { 
 
                     // Tetromino rotates and collides with a block
                     if (rotate_left) { 
@@ -384,12 +357,12 @@ void Tetris::update() {
         }
 
         // If row is full, shift board down 
-        for (int i = NUMROWS-1; i >= 0; i--) {          // test every row
+        for (int i = board->NUMROWS-1; i >= 0; i--) {          // test every row
 
             if (!delete_row) {
                 delete_row = true;                      // true until proven false
-                for (int j = 0; j < NUMCOLS; j++) {     // check each block of the row 
-                    if (board[i][j] == -1) {            // if there exists at least one empty block 
+                for (int j = 0; j < board->NUMCOLS; j++) {     // check each block of the row 
+                    if (board->color[i][j] == -1) {            // if there exists at least one empty block 
                         delete_row = false;             // do not delete any row
                         break; 
                     }
@@ -398,8 +371,8 @@ void Tetris::update() {
 
             // If delete_row is true, shift board down
             else 
-                for (int j = 0; j < NUMCOLS; j++)
-                    board[i+1][j] = board[i][j];
+                for (int j = 0; j < board->NUMCOLS; j++)
+                    board->color[i+1][j] = board->color[i][j];
 
         }
 
@@ -442,7 +415,7 @@ void Tetris::create_button(int x, int y, int width, int height, int k) {
 // Render Tetromino block
 void Tetris::draw_block(int x, int y, int k) {
 
-    SDL_Rect block = {x, y, int(blockWidth), int(blockHeight)};
+    SDL_Rect block = {x, y, int(board->BLOCK_WIDTH), int(board->BLOCK_HEIGHT)};
     SDL_SetRenderDrawColor(renderer, colors[k][0], colors[k][1], colors[k][2], colors[k][3]);
     SDL_RenderFillRect(renderer, &block);
 
@@ -456,20 +429,20 @@ void Tetris::render() {
     SDL_RenderClear(renderer);
 
 
-    int x = (next_tetro->X-3)*blockWidth; 
+    int x = (next_tetro->X-3)*board->BLOCK_WIDTH; 
     int y = gameoffset; 
 
     renderTexture(font_image_tetris, renderer, x, y);
 
     // Render score text
-    renderTexture(font_image_score_text, renderer, x, y + blockWidth);
+    renderTexture(font_image_score_text, renderer, x, y + board->BLOCK_WIDTH);
 
     // Render score
     if (render_score) {
         font_image_score = renderText(std::to_string(score), "resources/fonts/bitwise.ttf", font_color, 20, renderer);
         render_score = false;
     }
-    renderTexture(font_image_score, renderer, x + 60, y + blockWidth);
+    renderTexture(font_image_score, renderer, x + 60, y + board->BLOCK_WIDTH);
     
     int tetro_x, tetro_y;
 
@@ -477,8 +450,8 @@ void Tetris::render() {
     for (int i = 0; i < tetro->SIZE; i++) {
 
         // Get new coordinates
-        tetro_x = float(tetro->get_block_x(i))*blockWidth + gameoffset;
-        tetro_y = float(tetro->get_block_y(i))*blockHeight + gameoffset;
+        tetro_x = float(tetro->get_block_x(i))*board->BLOCK_WIDTH + gameoffset;
+        tetro_y = float(tetro->get_block_y(i))*board->BLOCK_HEIGHT + gameoffset;
 
         draw_block(tetro_x, tetro_y, tetro->color);
 
@@ -491,25 +464,25 @@ void Tetris::render() {
 
 
             // Get new coordinates
-            tetro_x = float(next_tetro->get_block_x(i))*blockWidth;
-            tetro_y = float(next_tetro->get_block_y(i))*blockHeight;
+            tetro_x = float(next_tetro->get_block_x(i))*board->BLOCK_WIDTH;
+            tetro_y = float(next_tetro->get_block_y(i))*board->BLOCK_HEIGHT;
 
             draw_block(tetro_x, tetro_y, next_tetro->color);
 
         }
 
     // This is the board. Non-active tetrominos live here.
-    for (int i = 0; i < NUMROWS; i++)
-        for (int j = 0; j < NUMCOLS; j++)
+    for (int i = 0; i < board->NUMROWS; i++)
+        for (int j = 0; j < board->NUMCOLS; j++)
 
-            if (board[i][j]!=-1) {
+            if (board->color[i][j]!=-1) {
 
 
                 // Get new coordinates
-                tetro_x = float(j)*blockWidth + gameoffset;
-                tetro_y = float(i)*blockHeight + gameoffset;
+                tetro_x = float(j)*board->BLOCK_WIDTH + gameoffset;
+                tetro_y = float(i)*board->BLOCK_HEIGHT + gameoffset;
 
-                draw_block(tetro_x, tetro_y, board[i][j]);
+                draw_block(tetro_x, tetro_y, board->color[i][j]);
 
             }
 
@@ -520,32 +493,32 @@ void Tetris::render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
     // Draw left border
-    SDL_RenderDrawLine(renderer, gameoffset, gameoffset, gameoffset, gameoffset+game_height);
+    SDL_RenderDrawLine(renderer, gameoffset, gameoffset, gameoffset, gameoffset+board->HEIGHT);
 
     // Draw right border
-    SDL_RenderDrawLine(renderer, gameoffset+game_width, gameoffset, gameoffset+game_width, gameoffset+game_height);
+    SDL_RenderDrawLine(renderer, gameoffset+board->WIDTH, gameoffset, gameoffset+board->WIDTH, gameoffset+board->HEIGHT);
 
     // Draw upper border
-    SDL_RenderDrawLine(renderer, gameoffset, gameoffset, gameoffset+game_width, gameoffset);
+    SDL_RenderDrawLine(renderer, gameoffset, gameoffset, gameoffset+board->WIDTH, gameoffset);
 
     // Draw bottom border
-    SDL_RenderDrawLine(renderer, gameoffset, gameoffset+game_height, gameoffset+game_width, gameoffset+game_height);
+    SDL_RenderDrawLine(renderer, gameoffset, gameoffset+board->HEIGHT, gameoffset+board->WIDTH, gameoffset+board->HEIGHT);
 
     // If game is over, display "Game Over!"
     if (gameover)
-        renderTexture(font_image_game_over, renderer, newgamex1, SCREEN_HEIGHT-newgamey1+4*blockWidth);
+        renderTexture(font_image_game_over, renderer, newgamex1, SCREEN_HEIGHT-newgamey1+4*board->BLOCK_WIDTH);
 
     // Create "New Game" button
-    create_button(newgamex1, newgamey2, 7*blockWidth, 2*blockHeight, 2);
+    create_button(newgamex1, newgamey2, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, 2);
 
     // Render "New Game" font
     renderTexture(font_image_new_game, renderer, newgamex1+10, newgamey2+10);
 
     // Create "Quit" button
-    create_button(newgamex1, newgamey2+4*blockHeight, 7*blockWidth, 2*blockHeight, 0);
+    create_button(newgamex1, newgamey2+4*board->BLOCK_HEIGHT, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, 0);
 
     // Render "Quit" font
-    renderTexture(font_image_quit, renderer, newgamex1+10, newgamey2+4*blockHeight+10);
+    renderTexture(font_image_quit, renderer, newgamex1+10, newgamey2+4*board->BLOCK_HEIGHT+10);
 
     // Swap buffers
     SDL_RenderPresent(renderer);
@@ -555,9 +528,9 @@ void Tetris::render() {
 // Restarts game
 void Tetris::reset() { 
 
-    for(int i = 0; i < NUMROWS; i++)
-        for(int j = 0; j < NUMCOLS; j++)
-            board[i][j] = -1; 
+    for(int i = 0; i < board->NUMROWS; i++)
+        for(int j = 0; j < board->NUMCOLS; j++)
+            board->color[i][j] = -1; 
 
     score = 0;
     render_score = true;
@@ -568,8 +541,8 @@ void Tetris::reset() {
 
     tetro = new Tetromino(rand()%7, rand()%NCOLORS ); 
     next_tetro = new Tetromino(rand()%7, rand()%NCOLORS );
-    tetro->set_position(int(NUMCOLS/2),0);
-    next_tetro->set_position(NUMCOLS+5,int(0.3*NUMROWS));
+    tetro->set_position(int(board->NUMCOLS/2),0);
+    next_tetro->set_position(board->NUMCOLS+5,int(0.3*board->NUMROWS));
 
     rotate_left         = false;
     shifted         = false;
@@ -605,7 +578,6 @@ void Tetris::execute() {
         input();
         update();
         render();
-        //SDL_Delay(1);
 
         if(newgameup && newgamedown)
             reset();             
@@ -616,5 +588,18 @@ void Tetris::execute() {
     } while(!done);
 
     clean_up();
+}
+
+void Tetris::frame_rate(float *last_time, float *this_time, float *delta_time) {
+
+    // Get number of milliseconds since SDL_Init() of the previous frame
+    *last_time = *this_time; 
+
+    // Get number of milliseconds since SDL_Init()
+    *this_time = SDL_GetTicks(); 
+
+    // Variation of time between each game loop
+    *delta_time = (*this_time - *last_time) / 1000.0;         // dividing by 1000 to convert in seconds
+
 }
 

@@ -13,6 +13,7 @@
 #include <iostream>
 
 class Tetromino;
+class Board;
 
 class Tetris {
 public:
@@ -27,12 +28,9 @@ public:
     SDL_Renderer*   renderer;
 
     /* Game objects */
+    Board *board;               // game board
     Tetromino *tetro;           // current tetromino
     Tetromino *next_tetro;      // next tetromino
-
-    /* Board information */
-    static const int NUMROWS = 30;       // Number of rows in board
-    static const int NUMCOLS = 15;       // numbers of columns in board
 
     /* Sounds */
 
@@ -78,21 +76,11 @@ public:
 
     float acceleration;   // multiplied by score to provide falling speed
 
-    float thisTime;     // time since SDL_Init() of the current game loop
-    float lastTime;     // time since SDL_Init() of the previous game loop
-    float deltaTime;     // thisTime - lastTime
+    float this_time;     // time since SDL_Init() of the current game loop
+    float last_time;     // time since SDL_Init() of the previous game loop
+    float delta_time;     // this_time - last_time
     float time_till_drop;     // tetromino falls down 1 block every time_till_drop seconds 
     float time_counter;     // counts number of game loops to allow tetromino to fall down  
-
-    int game_width;      // board width
-    int game_height;      // board height
-
-    // This is the board, where dropped tetrominos live
-    int board[NUMROWS][NUMCOLS];    // it's [y][x] not [x][y]
-
-    // Width and height of a block of the board
-    float blockWidth;
-    float blockHeight; 
 
     // Coordinates of the "New Game" button
     // Also used for "Quit" button
@@ -102,8 +90,7 @@ public:
     float newgamey2;        // up
 
 
-    static const int NCOLORS = 6;          // number of colors
-
+    static const int NCOLORS = 6;          // number of colors 
     static const float colors[][4];
 
     /* Main functions */
@@ -120,6 +107,7 @@ private:
     /* Helper functions */
     void draw_block(int x, int y, int k);
     void create_button(int x, int y, int width, int height, int k);
+    void frame_rate(float *last_time, float *this_time, float *delta_time);
 
 };
 
