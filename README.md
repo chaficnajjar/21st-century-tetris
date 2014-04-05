@@ -1,13 +1,27 @@
 Tetris Unleashed!
 ================
 
-Tetris clone based on [QuantumKing's](https://github.com/QuantumKing) deleted project.
+Tetris clone written in C++ with SDL 2.0
 
 ## Installation
 
-You will need
-+ [SDL 2.0.1](http://www.libsdl.org/)
-+ [SDL_ttf 2.0](http://www.libsdl.org/projects/SDL_ttf/)
+### Ubuntu
+
+You will need to download and install: 
+
++ [SDL 2.0](http://www.libsdl.org/)
++ [SDL ttf 2.0](http://www.libsdl.org/projects/SDL_ttf/)
+
+Then, just type `make` to compile.
+
+### OS X
+
+1. Install [Homebrew](http://brew.sh/).
+2. Type `make` to install libraries and compile.
+
+## Run the game
+
+To run the game, type `./tetris`.
 
 ## How to play
 
@@ -30,7 +44,8 @@ Quit            -> quits
 
 + ~~Update code to SDL2~~
 + ~~Add fonts with SDL_ttf~~
-+ Convert to OOP
++ ~~Convert to OOP~~
++ Test on OS X
 + Add music
 + Add pause option
 + Add fullscreen option 
@@ -40,13 +55,4 @@ Quit            -> quits
 
 # Credits
 
-This project is based on [QuantumKing's](https://github.com/QuantumKing) now deleted project. 
-
-Restructuring and modifications by Chafic Najjar - chafic.najjar@gmail.com
-+ Added all comments
-+ Removed Tetris class, re-organized all variables and shortened code 
-+ Added support for W/A/S/D keys
-+ Fixed bug that didn't allow continuously shifting the tetromino left or right
-+ Increased game speed
-+ Replaced legacy OpenGL and SDL1.2 with pure SDL 2.0 implementation
-+ Replaced FreeType with SDL2_tff
+ Chafic Najjar - chafic.najjar@gmail.com

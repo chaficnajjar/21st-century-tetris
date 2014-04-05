@@ -3,57 +3,50 @@
 #ifndef TETROMINO_HPP
 #define TETROMINO_HPP
 
-// Put everything related to the tetromino like block coordinates, rotation, color, position, etc.
 class Tetromino { 
 
 public:
-    static const int SIZE;
-    int type;
-    int color;
-
     enum Status {INACTIVE, WAITING, FALLING, LANDED};
-    Status status;
+    enum Movement {NONE = 0, LEFT = -1, RIGHT = 1};
+    static const int SIZE = 4;
+    static const int coords_table[7][4][2];
 
-    // Movement
-    int xoffset;
-
-    // coords is a pointer to an array of unknown dimensions of int
-    int (*coords)[2]; 
-
-    static const int coordsTable[7][4][2];
-
-    // coordinates of the block at (0, 0)
-    int X, Y; 
-
+public:
     Tetromino(int type, int color);
 
     // Sets position of the block at (0, 0)
-    void set_position(int x, int y);
+    void set_position(int new_x, int new_y) {x = new_x; y = new_y;}
 
-    // Used by player to rotate tetrimino
+    // Sets position of any block
+    void set_block_x(int i, int new_x) {x = new_x - coords[i][0];}
+    void set_block_y(int i, int new_y) {y = new_y - coords[i][1];}
+
+    // Get x coordinate of upper left vertex of block i
+    int get_block_x(int i) {return x + coords[i][0];}
+
+    // Get y coordinate of upper left vertex of block i
+    int get_block_y(int i) {return y + coords[i][1];}
+
+    void add_to_x(int x_offset) { x += x_offset;}
+
+    bool has_landed() {return status == LANDED;}
+    void lands() {status = LANDED;}
+    void drop() {status = FALLING;}
+
+    void rotate_right();
     void rotate_left();
 
-    // Counter-rotates tetromino when player rotates near a wall
-    void rotate_right();
-    
-    // Get x coordinate of upper left of block i
-    int get_block_x(int i);
-
-    // Get y coordinate of upper left of block i
-    int get_block_y(int i);
-
-    void set_block_x(int i, int x);
-
-    void set_block_y(int i, int y);
-
-    void add_to_x(int xoffset);
-
-    bool has_landed();
-
-    void lands();
-
-    void drop();
-
+public:
+    Status status;
+    Movement movement;
+    int x, y;               // coordinates of the block at (0, 0)
+    int type;
+    int color;
+    bool free_fall;         // true if spacebar was pressed, falls down instantaneously
+    bool speed_up;          // true if 's' or 'down' was pressed, falls down rapidly
+    bool shift;             // true if player shifts tetromino left or right
+    bool rotate;            // true if rotation occured (always counterclockwise)
+    int (*coords)[2];       // relative coordinates (used for rotation)
 };
 
 #endif

@@ -3,8 +3,6 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-#include "tetromino.hpp"
-
 class Board {
 public:
     static const int HEIGHT = 600;
@@ -17,8 +15,8 @@ public:
 
 public:
     Board();
-    void increase_score_by(int delta);
-    int get_score();
+    void increase_score_by(int delta) {score += delta;}
+    int get_score() {return score;}
     void delete_full_rows();
     bool add(Tetromino *tetro);
 
@@ -30,8 +28,8 @@ private:
     int score;
 
 public:
-    bool render_score;
     int color[ROWS][COLS];
+    bool render_score;
 };
 
 #endif
