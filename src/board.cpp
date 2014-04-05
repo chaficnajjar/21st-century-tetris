@@ -1,24 +1,16 @@
+//  Board class definitions
 
 #include "board.hpp"
 
 Board::Board() {
-    // Initially no blocks on the board
-    for (int i = 0; i < NUMROWS; i++)
-        for (int j = 0; j < NUMCOLS; j++)
-            color[i][j] = -1;               // Note: board[y][x] not board [x][y]
-                                            // -1 stands for "No color"
     score = 0;
     render_score = true;
-
-    bonus_counter = 0;
-
+    for (int i = 0; i < ROWS; i++)
+        for (int j = 0; j < COLS; j++)
+            color[i][j] = -1;   // All blocks on the board are initially colorless
 }
 
-//void Board::shift_down() {
-
-//}
-
-void Board::add_score(int delta) {
+void Board::increase_score_by(int delta) {
     score += delta;
 }
 
@@ -26,51 +18,40 @@ int Board::get_score() {
     return score;
 }
 
-void Board::delete_rows() {
+bool Board::full_row(int row) {
+    for (int col = 0; col < COLS; col++)          // check each block of the row 
+        if (color[row][col] == -1)              // if there exists at least one empty block 
+            return false;
+    return true;
+}
 
-    bool delete_row = false;
+void Board::shift_down(int i) {
+    for (int row = i; row >= 0; row--)
+        for (int col = 0; col < COLS; col++)
+            color[row+1][col] = color[row][col];
+}
 
-    // If row is full, shift board down 
-    for (int i = NUMROWS-1; i >= 0; i--) {          // test every row
+void Board::delete_full_rows() {
+    int bonus_counter = 0;                      // counts the number of consecutive row deletes
 
-        if (!delete_row) {
-            delete_row = true;                      // true until proven false
-            for (int j = 0; j < NUMCOLS; j++) {     // check each block of the row 
-                if (color[i][j] == -1) {            // if there exists at least one empty block 
-                    delete_row = false;             // do not delete any row
-                    break; 
-                }
-            }
-        }
+    for (int row = ROWS-1; row >= 0; row--) {         // test every row
+        if (!full_row(row))
+            continue;
 
-        // If delete_row is true, shift board down
-        else 
-            for (int j = 0; j < NUMCOLS; j++)
-                color[i+1][j] = color[i][j];
+        // To delete the row, shift the upper part of the board down
+        shift_down(row);
+        row++;
 
-    }
-
-    // Row was deleted
-    if (delete_row) {
-        add_score(1);                    // increment score
-        bonus_counter++;            // increment bonus counter 
+        increase_score_by(1);  
+        bonus_counter++;
         render_score = true;
-        delete_row = false;             // row now deleted
     }
 
-    else 
-        bonus_counter = 0;          // tetromino has landed but no row was deleted
-        
-    // 4 rows deleted in a row (no pun intended)
-    if (bonus_counter == 4) { 
-           add_score(BONUS);      // you get 3 points // replace by constant BONUS
-           bonus_counter = 0;
-    }
-
+    if (bonus_counter == 4)
+       increase_score_by(BONUS);                // you get 3 points // replace by constant BONUS
 }
 
 bool Board::add(Tetromino *tetro) {
-
     for (int i = 0; i < tetro->SIZE; i++) { 
 
         int x = tetro->get_block_x(i);
@@ -79,11 +60,8 @@ bool Board::add(Tetromino *tetro) {
         // If any block touches the top border of the board, then it's game over
         if (y <= 0)
             return false; 
-        
         else
             color[y][x] = tetro->color; // update color in corresponding block position
     }
-    
     return true;
-
 }

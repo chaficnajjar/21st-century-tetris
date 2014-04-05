@@ -1,8 +1,5 @@
-
-/*
- *  Tetris game
- *  Author: Chafic Najjar <chafic.najjar@gmail.com>
- */
+//  Tetris game written in C++ using SDL 2.0
+//  Author: Chafic Najjar <chafic.najjar@gmail.com>
 
 #include "tetris.hpp"
 

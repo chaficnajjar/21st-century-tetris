@@ -1,6 +1,6 @@
+//  Tetromino class definitions
 
 #include "tetromino.hpp"
-
 
 const int Tetromino::SIZE = 4;
 
@@ -38,7 +38,6 @@ const int Tetromino::coordsTable[7][4][2] = {
 };
 
 Tetromino::Tetromino(int new_type, int new_color) {
-
     type = new_type;
     color = new_color;
     status = INACTIVE;
@@ -55,7 +54,6 @@ Tetromino::Tetromino(int new_type, int new_color) {
         coords[i][0] = coordsTable[type][i][0];
         coords[i][1] = coordsTable[type][i][1];
     }
-
 }
 
 
@@ -67,7 +65,6 @@ void Tetromino::set_position(int x, int y) {
 
 // Used by player to rotate tetrimino
 void Tetromino::rotate_left() {
-
     // Loop through all blocks
     for(int i = 0; i < SIZE; i++) {
         int temp = coords[i][0];
@@ -78,7 +75,6 @@ void Tetromino::rotate_left() {
 
 // Counter-rotates tetromino when player rotates near a wall
 void Tetromino::rotate_right() {
-
     // Loop through all blocks
     for(int i = 0; i < SIZE; i++) {
         int temp = coords[i][0];

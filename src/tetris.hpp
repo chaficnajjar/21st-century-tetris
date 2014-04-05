@@ -1,16 +1,10 @@
-
-/*
- *  Tetris class declaration
- */
+//  Tetris class declarations
 
 #ifndef TETRIS_HPP
 #define TETRIS_HPP
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
-
-#include <iostream>
 
 class Tetromino;
 class Board;

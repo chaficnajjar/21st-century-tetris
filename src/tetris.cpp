@@ -1,15 +1,10 @@
+//  Tetris class definitions
 
-/*
- * Author: Chafic Najjar
- * Tetris game written in C++ using SDL 2.0
- */
-
+#include <random>
 #include "tetris.hpp"
 #include "tetromino.hpp"
 #include "board.hpp"
 #include "utilities.hpp"
-
-#include <random>
 
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -47,12 +42,12 @@ Tetris::Tetris(int argc, char *argv[]) {
     TTF_Init();
     white = { 255, 255, 255 };
 
-    font_image_tetris = renderText("Tetris Unleashed!", "resources/fonts/bitwise.ttf", white, 16, renderer);
-    font_image_score_text = renderText("Score: ", "resources/fonts/bitwise.ttf", white, 20, renderer);
-    font_image_score = renderText(std::to_string(board->get_score()), "resources/fonts/bitwise.ttf", white, 20, renderer);
-    font_image_new_game = renderText("New game", "resources/fonts/bitwise.ttf", white, 20, renderer);
-    font_image_quit = renderText("Quit", "resources/fonts/bitwise.ttf", white, 20, renderer);
-    font_image_game_over = renderText("Game over!", "resources/fonts/bitwise.ttf", white, 16, renderer);
+    font_image_tetris = render_text("Tetris Unleashed!", "resources/fonts/bitwise.ttf", white, 16, renderer);
+    font_image_score_text = render_text("Score: ", "resources/fonts/bitwise.ttf", white, 20, renderer);
+    font_image_score = render_text(std::to_string(board->get_score()), "resources/fonts/bitwise.ttf", white, 20, renderer);
+    font_image_new_game = render_text("New game", "resources/fonts/bitwise.ttf", white, 20, renderer);
+    font_image_quit = render_text("Quit", "resources/fonts/bitwise.ttf", white, 20, renderer);
+    font_image_game_over = render_text("Game over!", "resources/fonts/bitwise.ttf", white, 16, renderer);
 
     x_offset         = 0;
     rotate_left     = false;
@@ -89,10 +84,10 @@ Tetris::Tetris(int argc, char *argv[]) {
     // At the start of the game:
     // x position of (0, 0) block of tetro is int(15/2) = 7 which is the exact horizontal middle of board
     // y position of (0, 0) block of tetro is 0 which is the top of the board
-    tetro->set_position(int(board->NUMCOLS/2), 0);
+    tetro->set_position(int(board->COLS/2), 0);
 
     // Position next_tetro at the upper right of the window, outside of the board
-    next_tetro->set_position(board->NUMCOLS+5,int(0.3*board->NUMROWS)); 
+    next_tetro->set_position(board->COLS+5,int(0.3*board->ROWS)); 
 
 }
  
@@ -210,7 +205,7 @@ void Tetris::release_tetromino() {
 
     delete [] tetro;                                // delete allocated memory
     tetro = next_tetro;                             // update falling tetromino
-    tetro->set_position(int(board->NUMCOLS/2), 0);  // position the newly falling tetromino
+    tetro->set_position(int(board->COLS/2), 0);  // position the newly falling tetromino
 
     next_tetro = new_tetro;                         // update next_tetro to point to tetromino under "Next Piece"
 
@@ -285,7 +280,7 @@ void Tetris::update() {
         int y = tetro->get_block_y(i); 
 
         // Block crosses wall after rotation and/or translation 
-        if (x < 0 || x >= board->NUMCOLS) {
+        if (x < 0 || x >= board->COLS) {
 
             // Because of rotation
             if (rotate_left) 
@@ -297,9 +292,9 @@ void Tetris::update() {
         }
 
         // Block touches ground
-        if (y >= board->NUMROWS) {
+        if (y >= board->ROWS) {
             tetro->lands();
-            tetro->set_block_y(i, board->NUMROWS-1); // change the value of Y so that block(s) of the (old) tetromino is/are above the blue line
+            tetro->set_block_y(i, board->ROWS-1); // change the value of Y so that block(s) of the (old) tetromino is/are above the blue line
         }
 
         // Block is on the board
@@ -328,7 +323,7 @@ void Tetris::update() {
     }
 
     //=== Delete full rows ===//
-    board->delete_rows();
+    board->delete_full_rows();
 
     // Done rotating and shifting
     rotate_left = false; 
@@ -367,17 +362,17 @@ void Tetris::render() {
     int x = (next_tetro->X-3)*board->BLOCK_WIDTH; 
     int y = gameoffset; 
 
-    renderTexture(font_image_tetris, renderer, x, y);
+    render_texture(font_image_tetris, renderer, x, y);
 
     // Render score text
-    renderTexture(font_image_score_text, renderer, x, y + board->BLOCK_WIDTH);
+    render_texture(font_image_score_text, renderer, x, y + board->BLOCK_WIDTH);
 
     // Render score
     if (board->render_score) {
-        font_image_score = renderText(std::to_string(board->get_score()), "resources/fonts/bitwise.ttf", white, 20, renderer);
+        font_image_score = render_text(std::to_string(board->get_score()), "resources/fonts/bitwise.ttf", white, 20, renderer);
         board->render_score = false;
     }
-    renderTexture(font_image_score, renderer, x + 60, y + board->BLOCK_WIDTH);
+    render_texture(font_image_score, renderer, x + 60, y + board->BLOCK_WIDTH);
     
     int tetro_x, tetro_y;
 
@@ -407,8 +402,8 @@ void Tetris::render() {
         }
 
     // This is the board. Non-active tetrominos live here.
-    for (int i = 0; i < board->NUMROWS; i++)
-        for (int j = 0; j < board->NUMCOLS; j++)
+    for (int i = 0; i < board->ROWS; i++)
+        for (int j = 0; j < board->COLS; j++)
 
             if (board->color[i][j]!=-1) {
 
@@ -441,19 +436,19 @@ void Tetris::render() {
 
     // If game is over, display "Game Over!"
     if (game_over)
-        renderTexture(font_image_game_over, renderer, newgamex1, SCREEN_HEIGHT-newgamey1+4*board->BLOCK_WIDTH);
+        render_texture(font_image_game_over, renderer, newgamex1, SCREEN_HEIGHT-newgamey1+4*board->BLOCK_WIDTH);
 
     // Create "New Game" button
     create_button(newgamex1, newgamey2, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, 2);
 
     // Render "New Game" font
-    renderTexture(font_image_new_game, renderer, newgamex1+10, newgamey2+10);
+    render_texture(font_image_new_game, renderer, newgamex1+10, newgamey2+10);
 
     // Create "Quit" button
     create_button(newgamex1, newgamey2+4*board->BLOCK_HEIGHT, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, 0);
 
     // Render "Quit" font
-    renderTexture(font_image_quit, renderer, newgamex1+10, newgamey2+4*board->BLOCK_HEIGHT+10);
+    render_texture(font_image_quit, renderer, newgamex1+10, newgamey2+4*board->BLOCK_HEIGHT+10);
 
     // Swap buffers
     SDL_RenderPresent(renderer);
@@ -463,8 +458,8 @@ void Tetris::render() {
 // Restarts game
 void Tetris::reset() { 
 
-    for(int i = 0; i < board->NUMROWS; i++)
-        for(int j = 0; j < board->NUMCOLS; j++)
+    for(int i = 0; i < board->ROWS; i++)
+        for(int j = 0; j < board->COLS; j++)
             board->color[i][j] = -1; 
 
     // release allocated memory
@@ -477,8 +472,8 @@ void Tetris::reset() {
     tetro = new Tetromino(rand()%7, rand()%NCOLORS ); 
     next_tetro = new Tetromino(rand()%7, rand()%NCOLORS );
 
-    tetro->set_position(int(board->NUMCOLS/2),0);
-    next_tetro->set_position(board->NUMCOLS+5,int(0.3*board->NUMROWS));
+    tetro->set_position(int(board->COLS/2),0);
+    next_tetro->set_position(board->COLS+5,int(0.3*board->ROWS));
 
     rotate_left         = false;
     shifted         = false;

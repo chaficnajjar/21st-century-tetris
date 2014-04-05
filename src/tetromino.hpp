@@ -1,7 +1,4 @@
-
-/*
- * Author: Chafic Najjar
- */
+//  Tetromino class declarations
 
 #ifndef TETROMINO_HPP
 #define TETROMINO_HPP
