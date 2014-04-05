@@ -1,13 +1,11 @@
+
 GCC = g++
 SOURCE = src/main.cpp src/tetris.cpp src/tetromino.cpp src/board.cpp
-SDL_LIB = -L/usr/local/lib -lSDL2 -lSDL2_ttf -Wl,-rpath=/usr/local/lib `sdl2-config --cflags --libs`
-SDL_INCLUDE = -I/usr/local/include
-GCCFLAGS = -Wall -ansi -std=c++0x $(SDL_INCLUDE)
-LDFLAGS = $(SDL_LIB)
+FLAGS = -Wall -g -std=c++0x -lSDL2 -lSDL2_ttf `sdl2-config --cflags --libs`
 BINARY = tetris
 
 all: 
-	$(GCC) $(SOURCE) $(GCCFLAGS) $(LDFLAGS) -o $(BINARY)
+	$(GCC) $(SOURCE) $(FLAGS) -o $(BINARY)
 
 clean:
-	rm *.o && rm $(BINARY)
+	@rm $(BINARY)
