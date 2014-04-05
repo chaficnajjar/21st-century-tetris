@@ -3,8 +3,6 @@ Tetris Unleashed!
 
 Tetris clone based on [QuantumKing's](https://github.com/QuantumKing) deleted project.
 
-![alt text](./screenshots/tetris-unleashed-screenshot.png "Tetris Unleashed!")
-
 ## Installation
 
 You will need
