@@ -41,6 +41,10 @@ Tetromino::Tetromino(int new_type, int new_color) {
 
     type = new_type;
     color = new_color;
+    status = INACTIVE;
+
+    // Movement
+    xoffset = 0;
 
     // Tetromino coordinates
     coords = new int[4][2];
@@ -83,12 +87,12 @@ void Tetromino::rotate_right() {
     }
 }
 
-// Get x coordinate of upper left of block i
+// Get x coordinate of upper left vertex of block i
 int Tetromino::get_block_x(int i) { 
     return X + coords[i][0];
 }
 
-// Get y coordinate of upper left of block i
+// Get y coordinate of upper left vertex of block i
 int Tetromino::get_block_y(int i) {
     return Y + coords[i][1];
 }
@@ -101,4 +105,18 @@ void Tetromino::set_block_y(int i, int y) {
     Y = y - coords[i][1];
 }
 
+void Tetromino::add_to_x(int xoffset) {
+    X += xoffset;
+}
 
+bool Tetromino::has_landed() {
+    return status == LANDED;
+}
+
+void Tetromino::lands() {
+    status = LANDED;
+}
+
+void Tetromino::drop() {
+    status = FALLING;
+}

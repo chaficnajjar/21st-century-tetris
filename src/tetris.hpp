@@ -20,8 +20,8 @@ public:
     Tetris(int argc, char *argv[]);
 
     /* Screen resolution */
-    static const int SCREEN_WIDTH;
-    static const int SCREEN_HEIGHT;
+    static const int SCREEN_WIDTH = 500;
+    static const int SCREEN_HEIGHT = 640;
 
     /* Window and renderer */
     SDL_Window*     window;
@@ -37,7 +37,7 @@ public:
     /* Controllers */
 
     /* Fonts */
-    SDL_Color       font_color;
+    SDL_Color       white;
     SDL_Texture*    font_image_tetris;         
     SDL_Texture*    font_image_score_text;
     SDL_Texture*    font_image_score;
@@ -47,14 +47,14 @@ public:
 
     /* Scores */
 
-    int xoffset;                    //  0 (no movement)
+    int x_offset;                    //  0 (no movement)
                                     // -1 (tetromino will move left)
                                     //  1 (tetromino will move right)
 
     bool rotate_left;       // true if rotation occured (always counterclockwise)
     bool shifted;           // true if tetromino was shifted left or right
-    bool zoom_down;         // true if spacebar was pressed, falls down instantaneously
-    bool speedup;           // true if 's' or 'down' was pressed, falls down rapidly
+    bool free_fall;         // true if spacebar was pressed, falls down instantaneously
+    bool speed_up;           // true if 's' or 'down' was pressed, falls down rapidly
 
     bool launch_tetro;    // true when last tetrimino has landed
 
@@ -63,22 +63,16 @@ public:
     bool quitdown;    // true when player presses "Quit" button 
     bool quitup;    // true when player releases "Quit" button
 
-    bool gameover;    // true when player looses
+    bool game_over;    // true when player looses
     bool done;    // true when player exits game
-
-    bool delete_row;    // true when player fills a row
-    int bonus;        // bonus given if bonus_counter = 4
-    int bonus_counter;        // counts the number of consecutive row deletes
-    int score;        // score (speed of fall is proportional to score)
-    bool render_score;
 
     float gameoffset;    // space between board border and window border
 
     float acceleration;   // multiplied by score to provide falling speed
 
-    float this_time;     // time since SDL_Init() of the current game loop
-    float last_time;     // time since SDL_Init() of the previous game loop
-    float delta_time;     // this_time - last_time
+    int this_time;     // time since SDL_Init() of the current game loop
+    int last_time;     // time since SDL_Init() of the previous game loop
+
     float time_till_drop;     // tetromino falls down 1 block every time_till_drop seconds 
     float time_counter;     // counts number of game loops to allow tetromino to fall down  
 
@@ -105,9 +99,10 @@ public:
 
 private:
     /* Helper functions */
+    void release_tetromino();
     void draw_block(int x, int y, int k);
     void create_button(int x, int y, int width, int height, int k);
-    void frame_rate(float *last_time, float *this_time, float *delta_time);
+    float frame_rate(int *last_time, int *this_time);
 
 };
 
