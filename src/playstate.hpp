@@ -1,41 +1,43 @@
-//  Tetris class declarations
 
-#ifndef TETRIS_HPP
-#define TETRIS_HPP
+#ifndef PLAYSTATE_HPP
+#define PLAYSTATE_HPP
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "gamestate.hpp"
 
 class Tetromino;
 class Board;
 
-class Tetris {
+class PlayState : public GameState {
 public:
-    static const int SCREEN_WIDTH = 500;
-    static const int SCREEN_HEIGHT = 640;
     static const int NCOLORS = 6;
     static const int COLORS[][4];
     static const int GAME_OFFSET = 20;       // space between board border and window border
+    
+    void init(GameEngine* game);
+    void clean_up(GameEngine* game);
 
-public: 
-    Tetris(int argc, char *argv[]);
-    ~Tetris();
-    void execute();
-    void input();
-    void update();
-    void render();
+    void pause();
+    void resume();
     void reset();
 
-private:
-    void release_tetromino();
-    void draw_block(int x, int y, int k);
-    void create_button(int x, int y, int width, int height, int k);
-    float frame_rate(int *last_time, int *this_time);
+    void input(GameEngine* game);
+    void update(GameEngine* game);
+    void render(GameEngine* game);
+
+    static PlayState* Instance() { return &m_playstate; }
+
+protected:
+    PlayState() { }
 
 private:
-    // Window and renderer 
-    SDL_Window*     window;
-    SDL_Renderer*   renderer;
+    static PlayState m_playstate;
+
+    void release_tetromino();
+    void draw_block(GameEngine* game, int x, int y, int k);
+    void create_button(GameEngine* game, int x, int y, int width, int height, int k);
+    float frame_rate(GameEngine* game, int *last_time, int *this_time);
 
     // Game objects
     Board *board;

@@ -1,4 +1,3 @@
-//  Board class definitions
 
 #include "tetromino.hpp"
 #include "board.hpp"

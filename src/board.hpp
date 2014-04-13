@@ -1,4 +1,3 @@
-//  Board class declarations
 
 #ifndef BOARD_HPP
 #define BOARD_HPP

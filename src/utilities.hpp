@@ -3,35 +3,14 @@
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 
-void render_texture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr) {
-    SDL_RenderCopy(ren, tex, clip, &dst);
-}
+#include <string>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
-void render_texture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip = nullptr) {
-    SDL_Rect dst;
-    dst.x = x;
-    dst.y = y;
-    if (clip != nullptr){
-        dst.w = clip->w;
-        dst.h = clip->h;
-    }
-
-    else
-        SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
-
-    render_texture(tex, ren, dst, clip);
-}
-
-SDL_Texture* render_text(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
-    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
-
-    SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
-
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
-
-    SDL_FreeSurface(surf);
-    TTF_CloseFont(font);
-    return texture;
-}
+void render_texture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr);
+void render_texture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *clip = nullptr);
+SDL_Texture* render_text(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer);
+SDL_Texture* load_texture(const std::string &file, SDL_Renderer *ren);
 
 #endif
