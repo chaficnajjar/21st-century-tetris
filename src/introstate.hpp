@@ -28,10 +28,12 @@ private:
     static IntroState m_introstate;
 
     bool exit;
-    bool play;
 
-    // Images
+    // Logo
     SDL_Texture* logo;
+    int alpha;
+    enum Status {FADE_IN, REMAIN, FADE_OUT};
+    Status logo_status;
 };
 
 #endif

@@ -9,7 +9,8 @@ void IntroState::init(GameEngine* game) {
     logo = load_texture("resources/images/logo.png", game->renderer);
 
     exit = false;
-    play = false;
+    alpha = 1;
+    logo_status = FADE_IN;
 }
 
 void IntroState::clean_up(GameEngine* game) {
@@ -42,9 +43,6 @@ void IntroState::input(GameEngine* game) {
                 case SDLK_ESCAPE: 
                     exit = true; 
                     break;
-                case SDLK_SPACE:
-                    play = true; 
-                    break;
                 default: 
                     break;
             }
@@ -52,11 +50,13 @@ void IntroState::input(GameEngine* game) {
     }
 }
 
+
+#include <iostream>
 void IntroState::update(GameEngine* game) {
     if (exit)
         game->quit();
 
-    if (play)
+    if (alpha == 0)
         game->push_state(MenuState::Instance());
 }
 
@@ -69,6 +69,30 @@ void IntroState::render(GameEngine* game) {
     SDL_QueryTexture(logo, NULL, NULL, &iW, &iH);
     int x = game->SCREEN_WIDTH / 2 - iW / 2;
     int y = game->SCREEN_HEIGHT / 2 - iH / 2;
+
+    if (logo_status == FADE_IN) {
+        alpha += 3;
+        if (alpha >= 255) {
+            alpha = 255;
+            logo_status = REMAIN;
+        }
+    }
+
+    else if (logo_status == REMAIN) {
+        SDL_Delay(2000);
+        logo_status = FADE_OUT;
+    }
+
+    else if (logo_status == FADE_OUT) {
+        alpha -= 3;
+        if (alpha <= 0) {
+            alpha = 0;
+            logo_status = FADE_IN; 
+        }
+    }
+
+    SDL_SetTextureAlphaMod(logo, alpha);
+
     render_texture(logo, game->renderer, x, y);
 
     // Swap buffers
