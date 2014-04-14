@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 
 GCC = g++
-SOURCE = src/board.cpp src/introstate.cpp src/main.cpp src/playstate.cpp src/game_engine.cpp src/tetromino.cpp src/utilities.cpp
+SOURCE = src/main.cpp src/board.cpp src/tetromino.cpp src/introstate.cpp src/menustate.cpp src/playstate.cpp src/game_engine.cpp src/utilities.cpp
 FLAGS = -Wall -g -std=c++0x -lSDL2 -lSDL2_ttf -lSDL2_image `sdl2-config --cflags --libs`
 BINARY = tetris
 
