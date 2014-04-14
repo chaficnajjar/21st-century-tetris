@@ -1,6 +1,6 @@
 
 #include "introstate.hpp"
-#include "playstate.hpp"
+#include "menustate.hpp"
 #include "utilities.hpp"
 
 IntroState IntroState::m_introstate;
@@ -53,8 +53,11 @@ void IntroState::input(GameEngine* game) {
 }
 
 void IntroState::update(GameEngine* game) {
+    if (exit)
+        game->quit();
+
     if (play)
-        game->push_state(PlayState::Instance());
+        game->push_state(MenuState::Instance());
 }
 
 void IntroState::render(GameEngine* game) {

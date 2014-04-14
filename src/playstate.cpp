@@ -237,10 +237,6 @@ void PlayState::release_tetromino() {
 
 // Update game values
 void PlayState::update(GameEngine* game) { 
-    //=== Tetromino has crossed over the top border of the board ===//
-    if (game_over)
-        return;
-
     //=== New Game button was pressed ===//
     if (newgameup && newgamedown)
         reset();             
@@ -248,6 +244,10 @@ void PlayState::update(GameEngine* game) {
     //=== Quit button or 'x'/F4 was pressed ===//
     if ( (quitup && quitdown) || exit )
         game->quit();
+
+    //=== Tetromino has crossed over the top border of the board ===//
+    if (game_over)
+        return;
 
     //=== Tetromino has landed ===//
     if (tetro->has_landed()) {
