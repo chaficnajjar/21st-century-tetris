@@ -21,6 +21,8 @@ public:
 
     static IntroState* Instance() { return &m_introstate; }
 
+    void render_logo(GameEngine* game);
+
 protected:
     IntroState() { }
 

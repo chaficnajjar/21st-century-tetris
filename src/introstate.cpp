@@ -65,11 +65,14 @@ void IntroState::render(GameEngine* game) {
     SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 1);
     SDL_RenderClear(game->renderer);
 
-    int iW, iH;
-    SDL_QueryTexture(logo, NULL, NULL, &iW, &iH);
-    int x = game->SCREEN_WIDTH / 2 - iW / 2;
-    int y = game->SCREEN_HEIGHT / 2 - iH / 2;
+    render_logo(game);
 
+    // Swap buffers
+    SDL_RenderPresent(game->renderer);
+
+}
+
+void IntroState::render_logo(GameEngine* game) {
     if (logo_status == FADE_IN) {
         alpha += 3;
         if (alpha >= 255) {
@@ -93,9 +96,10 @@ void IntroState::render(GameEngine* game) {
 
     SDL_SetTextureAlphaMod(logo, alpha);
 
+    int logo_width, logo_height;
+    SDL_QueryTexture(logo, nullptr, nullptr, &logo_width, &logo_height);
+    int x = game->SCREEN_WIDTH / 2 - logo_width / 2;
+    int y = game->SCREEN_HEIGHT / 2 - logo_height / 2;
+
     render_texture(logo, game->renderer, x, y);
-
-    // Swap buffers
-    SDL_RenderPresent(game->renderer);
-
 }
