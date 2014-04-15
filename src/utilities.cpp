@@ -15,7 +15,7 @@ void render_texture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect 
     }
 
     else
-        SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+        SDL_QueryTexture(tex, nullptr, nullptr, &dst.w, &dst.h);
 
     render_texture(tex, ren, dst, clip);
 }
