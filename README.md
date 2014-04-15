@@ -11,6 +11,7 @@ You will need to download and install:
 
 + [SDL 2.0](http://www.libsdl.org/)
 + [SDL ttf 2.0](http://www.libsdl.org/projects/SDL_ttf/)
++ [SDL image 2.0](https://www.libsdl.org/projects/SDL_image/)
 
 Then, just type `make` to compile.
 
