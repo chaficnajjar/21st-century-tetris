@@ -32,7 +32,7 @@ private:
 
     // Fonts
     SDL_Color       white;
-    SDL_Texture*    font_image_tetris;         
+    SDL_Texture*    font_image_press_start;         
 };
 
 #endif

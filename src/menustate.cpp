@@ -12,11 +12,11 @@ void MenuState::init(GameEngine* game) {
     // Fonts
     TTF_Init();
     white = { 255, 255, 255 };
-    font_image_tetris = render_text("Tetris Unleashed!", "resources/fonts/bitwise.ttf", white, 16, game->renderer);
+    font_image_press_start = render_text("Press start!", "resources/fonts/bitwise.ttf", white, 16, game->renderer);
 }
 
 void MenuState::clean_up(GameEngine* game) {
-    SDL_DestroyTexture(font_image_tetris);
+    SDL_DestroyTexture(font_image_press_start);
     IMG_Quit();
 }
 
@@ -69,8 +69,10 @@ void MenuState::render(GameEngine* game) {
     SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 1);
     SDL_RenderClear(game->renderer);
 
-    render_texture(font_image_tetris, game->renderer, game->SCREEN_WIDTH/3, game->SCREEN_HEIGHT/8);
+    int height, width;
+    SDL_QueryTexture(font_image_press_start, nullptr, nullptr, &width, &height);
 
+    render_texture(font_image_press_start, game->renderer, (game->SCREEN_WIDTH - width)/2, (game->SCREEN_HEIGHT - height)/2); 
     // Swap buffers
     SDL_RenderPresent(game->renderer);
 }
