@@ -6,6 +6,8 @@
 #include "board.hpp"
 #include "utilities.hpp"
 
+#include <iostream>
+
 // This will prevent linker errors in case the same names are used in other files
 namespace {
     std::random_device rd;
@@ -14,21 +16,15 @@ namespace {
 
 PlayState PlayState::m_playstate;
 
-const int PlayState::COLORS[NCOLORS][4] = {
-    { 255, 0  , 0  , 255 },      // red
-    { 0  , 255, 0  , 255 },      // blue
-    { 0  , 0  , 255, 255 },      // turquoise
-    { 255, 255, 0  , 255 },      // purple
-    { 0  , 255, 255, 255 },      // brown
-    { 255, 0  , 255, 255 }       // yellow
-};
-
 void PlayState::init(GameEngine* game) {
 
     // Game objects
     board        = new Board();
-    tetro        = new Tetromino( rand()%7, rand()%NCOLORS );       // current tetromino
-    next_tetro   = new Tetromino( rand()%7, rand()%NCOLORS );       // next tetromino
+    tetro        = new Tetromino(rand()%7);       // current tetromino
+    next_tetro   = new Tetromino(rand()%7);       // next tetromino
+
+    // Texture
+    block_texture = load_texture("resources/sprites/block.bmp", game->renderer);
 
     // Fonts
     TTF_Init();
@@ -79,6 +75,8 @@ void PlayState::clean_up(GameEngine* game) {
     SDL_DestroyTexture(font_image_quit);
     SDL_DestroyTexture(font_image_game_over);
 
+    IMG_Quit();
+
     SDL_DestroyRenderer(game->renderer);
     SDL_DestroyWindow(game->window);
     SDL_Quit();
@@ -107,8 +105,8 @@ void PlayState::reset() {
 
     // Recreate objects
     board = new Board();
-    tetro = new Tetromino(rand()%7, rand()%NCOLORS); 
-    next_tetro = new Tetromino(rand()%7, rand()%NCOLORS);
+    tetro = new Tetromino(rand()%7); 
+    next_tetro = new Tetromino(rand()%7);
     tetro->set_position(int(board->COLS/2), 0);
     next_tetro->set_position(board->COLS+5, int(0.3*board->ROWS));
 
@@ -144,7 +142,7 @@ void PlayState::input(GameEngine *game) {
                     tetro->shift = true;
                     break;
                 case SDLK_w: case SDLK_UP: 
-                    if(tetro->type != 4)        // type 4 is the square
+                    if(tetro->type != 2)        // type 3 is O-Block
                         tetro->rotate = true;
                     break;
                 case SDLK_s: case SDLK_DOWN:
@@ -223,7 +221,7 @@ void PlayState::input(GameEngine *game) {
 }
 
 void PlayState::release_tetromino() {
-    Tetromino *new_tetro = new Tetromino(rand()%7, rand()%NCOLORS);
+    Tetromino *new_tetro = new Tetromino(rand()%7);
     new_tetro->set_position(next_tetro->x, next_tetro->y);
 
     delete [] tetro;
@@ -380,23 +378,35 @@ void PlayState::render(GameEngine* game) {
     
     int tetro_x, tetro_y;
 
+    // Prepare textures
+    int iW, iH;
+    SDL_QueryTexture(block_texture, nullptr, nullptr, &iW, &iH);
+
+    SDL_Rect clips[7];
+    for (int i = 0; i < 7; i++) {
+        clips[i].x = 0;
+        clips[i].y = i*24;
+        clips[i].w = 20;
+        clips[i].h = 20;
+    }
+
     // Draw tetromino squares
     for (int i = 0; i < tetro->SIZE; i++) {
         // Get new coordinates
-        tetro_x = float(tetro->get_block_x(i))*board->BLOCK_WIDTH + GAME_OFFSET;
-        tetro_y = float(tetro->get_block_y(i))*board->BLOCK_HEIGHT + GAME_OFFSET;
+        tetro_x = tetro->get_block_x(i)*board->BLOCK_WIDTH + GAME_OFFSET;
+        tetro_y = tetro->get_block_y(i)*board->BLOCK_HEIGHT + GAME_OFFSET;
 
-        draw_block(game, tetro_x, tetro_y, tetro->color);
+        draw_block(game, tetro_x, tetro_y, tetro->type, clips);
     }
 
     if (!game_over)
         // Draw next tetromino
         for (int i = 0; i < next_tetro->SIZE; i++) {
             // Get new coordinates
-            tetro_x = float(next_tetro->get_block_x(i))*board->BLOCK_WIDTH;
-            tetro_y = float(next_tetro->get_block_y(i))*board->BLOCK_HEIGHT;
+            tetro_x = next_tetro->get_block_x(i)*board->BLOCK_WIDTH;
+            tetro_y = next_tetro->get_block_y(i)*board->BLOCK_HEIGHT;
 
-            draw_block(game, tetro_x, tetro_y, next_tetro->color);
+            draw_block(game, tetro_x, tetro_y, next_tetro->type, clips);
         }
 
     // This is the board. Non-active tetrominos live here.
@@ -404,16 +414,16 @@ void PlayState::render(GameEngine* game) {
         for (int j = 0; j < board->COLS; j++)
             if (board->color[i][j]!=-1) {
                 // Get new coordinates
-                tetro_x = float(j)*board->BLOCK_WIDTH + GAME_OFFSET;
-                tetro_y = float(i)*board->BLOCK_HEIGHT + GAME_OFFSET;
+                tetro_x = j*board->BLOCK_WIDTH + GAME_OFFSET;
+                tetro_y = i*board->BLOCK_HEIGHT + GAME_OFFSET;
 
-                draw_block(game, tetro_x, tetro_y, board->color[i][j]);
+                draw_block(game, tetro_x, tetro_y, board->color[i][j], clips);
             }
     
     // Box surrounding board
 
-    // Set color to blue
-    SDL_SetRenderDrawColor(game->renderer, 0, 0, 255, 255);
+    // Set color to white
+    SDL_SetRenderDrawColor(game->renderer, 180, 180, 180, 255);
 
     // Draw left border
     SDL_RenderDrawLine(game->renderer, GAME_OFFSET, GAME_OFFSET, GAME_OFFSET, GAME_OFFSET+board->HEIGHT);
@@ -432,13 +442,15 @@ void PlayState::render(GameEngine* game) {
         render_texture(font_image_game_over, game->renderer, newgamex1, game->SCREEN_HEIGHT-newgamey1+4*board->BLOCK_WIDTH);
 
     // Create "New Game" button
-    create_button(game, newgamex1, newgamey2, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, 2);
+    int blue[4] = {0, 0, 255, 255};
+    create_button(game, newgamex1, newgamey2, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, blue);
 
     // Render "New Game" font
     render_texture(font_image_new_game, game->renderer, newgamex1+10, newgamey2+10);
 
     // Create "Quit" button
-    create_button(game, newgamex1, newgamey2+4*board->BLOCK_HEIGHT, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, 0);
+    int red[4] = {255, 0, 0, 255};
+    create_button(game, newgamex1, newgamey2+4*board->BLOCK_HEIGHT, 7*board->BLOCK_WIDTH, 2*board->BLOCK_HEIGHT, red);
 
     // Render "Quit" font
     render_texture(font_image_quit, game->renderer, newgamex1+10, newgamey2+4*board->BLOCK_HEIGHT+10);
@@ -448,17 +460,15 @@ void PlayState::render(GameEngine* game) {
 }
 
 // Create "New Game" and "Quit" buttons
-void PlayState::create_button(GameEngine* game, int x, int y, int width, int height, int k) {
+void PlayState::create_button(GameEngine* game, int x, int y, int width, int height, int color[]) {
     SDL_Rect rect = { x, y, width, height };
-    SDL_SetRenderDrawColor(game->renderer, COLORS[k][0], COLORS[k][1], COLORS[k][2], COLORS[k][3]);
+    SDL_SetRenderDrawColor(game->renderer, color[0], color[1], color[2], color[3]);
     SDL_RenderFillRect(game->renderer, &rect);
 }
 
 // Render Tetromino block
-void PlayState::draw_block(GameEngine* game, int x, int y, int k) {
-    SDL_Rect block = {x, y, int(board->BLOCK_WIDTH), int(board->BLOCK_HEIGHT)};
-    SDL_SetRenderDrawColor(game->renderer, COLORS[k][0], COLORS[k][1], COLORS[k][2], COLORS[k][3]);
-    SDL_RenderFillRect(game->renderer, &block);
+void PlayState::draw_block(GameEngine* game, int x, int y, int k, SDL_Rect clips[]) {
+    render_texture(block_texture, game->renderer, x, y, &clips[k]);
 }
 
 float PlayState::frame_rate(GameEngine* game, int *last_time, int *this_time) {

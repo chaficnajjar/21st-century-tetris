@@ -4,38 +4,37 @@
 
 const int Tetromino::coords_table[7][4][2] = { 
 
-    { { 0, -1 }, { 0, 0 }, { -1, 0 }, { -1, 1 } },      //type 0   |_|      The Dog
-                                                        //       |_|_|
-                                                        //       |_| 
+    { { 0, -1 }, { 0, 0 }, { -1, 0 }, { -1, 1 } },      //type 0            Z-Block
+                                                        //       |_|_|_
+                                                        //         |_|_| 
 
-    { { 0, -1 }, { 0, 0 }, { 1, 0 }, { 1, 1 } },        //type 1 |_|        The Dog inverted
-                                                        //       |_|_|
+    { { 1, -1 }, { 0, -1 }, { 0, 0 }, { 0, 1 } },       //type 1   |_|      J-Block
                                                         //         |_|
-
-    { { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 2 } },        //type 2 |_|        The Stick
-                                                        //       |_|
-                                                        //       |_|
-                                                        //       |_|
-
-    { { -1, 0 }, { 0, 0 }, { 1, 0 }, { 0, 1 } },        //type 3 |_|_|_|    The T
-                                                        //         |_|
-
-
-    { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } },         //type 4 |_|_|      The Square
                                                         //       |_|_|
 
-    { { -1, -1 }, { 0, -1 }, { 0, 0 }, { 0, 1 } },      //type 5 |_|_|      The L
-                                                        //         |_|
+    { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } },         //type 3 |_|_|      O-Block
+                                                        //       |_|_|
+
+    { { -1, 0 }, { 0, 0 }, { 1, 0 }, { 0, 1 } },        //type 4 |_|_|_|    T-Block
                                                         //         |_|
 
-    { { 1, -1 }, { 0, -1 }, { 0, 0 }, { 0, 1 } }        //type 6 |_|_|      The L inverted
+    { { 0, -1 }, { 0, 0 }, { 1, 0 }, { 1, 1 } },        //type 5            S-Block
+                                                        //         |_|_|
+                                                        //       |_|_|
+
+    { { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 2 } },        //type 6 |_|        I-Block
                                                         //       |_|
                                                         //       |_|
+                                                        //       |_|
+
+    { { -1, -1 }, { 0, -1 }, { 0, 0 }, { 0, 1 } }       //type 7 |_|        L-Block
+                                                        //       |_|_
+                                                        //       |_|_|
+
 };
 
-Tetromino::Tetromino(int new_type, int new_color) {
+Tetromino::Tetromino(int new_type) {
     type = new_type;
-    color = new_color;
     free_fall = false;
     speed_up = false;
     status = INACTIVE;

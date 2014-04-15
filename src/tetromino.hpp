@@ -12,7 +12,7 @@ public:
     static const int coords_table[7][4][2];
 
 public:
-    Tetromino(int type, int color);
+    Tetromino(int type);
 
     // Sets position of the block at (0, 0)
     void set_position(int new_x, int new_y) {x = new_x; y = new_y;}
@@ -41,7 +41,6 @@ public:
     Movement movement;
     int x, y;               // coordinates of the block at (0, 0)
     int type;
-    int color;
     bool free_fall;         // true if spacebar was pressed, falls down instantaneously
     bool speed_up;          // true if 's' or 'down' was pressed, falls down rapidly
     bool shift;             // true if player shifts tetromino left or right

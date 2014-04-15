@@ -52,7 +52,7 @@ bool Board::add(Tetromino *tetro) {
         if (y <= 0)
             return false; 
         else
-            color[y][x] = tetro->color;     // add tetromino: update color in corresponding board block
+            color[y][x] = tetro->type;     // add tetromino: update color in corresponding board block
     }
     return true;
 }

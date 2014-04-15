@@ -4,6 +4,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include "gamestate.hpp"
 
 class Tetromino;
@@ -11,8 +12,7 @@ class Board;
 
 class PlayState : public GameState {
 public:
-    static const int NCOLORS = 6;
-    static const int COLORS[][4];
+    static const int NCOLORS = 7;
     static const int GAME_OFFSET = 20;       // space between board border and window border
     
     void init(GameEngine* game);
@@ -35,14 +35,17 @@ private:
     static PlayState m_playstate;
 
     void release_tetromino();
-    void draw_block(GameEngine* game, int x, int y, int k);
-    void create_button(GameEngine* game, int x, int y, int width, int height, int k);
+    void draw_block(GameEngine* game, int x, int y, int k, SDL_Rect clips[]);
+    void create_button(GameEngine* game, int x, int y, int width, int height, int color[]);
     float frame_rate(GameEngine* game, int *last_time, int *this_time);
 
     // Game objects
     Board *board;
     Tetromino *tetro;
     Tetromino *next_tetro;
+
+    // Texture
+    SDL_Texture* block_texture;
 
     // Fonts
     SDL_Color       white;
