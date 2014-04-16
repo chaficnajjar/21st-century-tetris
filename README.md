@@ -44,10 +44,10 @@ Quit            -> quits
 ## To-do
 
 + ~~Update code to SDL2~~
-+ ~~Add fonts with SDL_ttf~~
++ ~~Add fonts with SDL ttf~~
 + ~~Convert to OOP~~
++ ~~Add music~~
 + Test on OS X
-+ Add music
 + Add pause option
 + Add fullscreen option 
 + Add tetrimino shadow
@@ -56,4 +56,7 @@ Quit            -> quits
 
 # Credits
 
- Chafic Najjar - chafic.najjar@gmail.com
+Chafic Najjar - chafic.najjar@gmail.com
+
+[irrKlang](http://www.ambiera.com/irrklang/index.html) for sound.
+

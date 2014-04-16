@@ -5,7 +5,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <irrKlang.h>
 #include "gamestate.hpp"
+
+using namespace irrklang;
 
 class Tetromino;
 class Board;
@@ -43,6 +46,9 @@ private:
     Board *board;
     Tetromino *tetro;
     Tetromino *next_tetro;
+
+    // Music
+    ISoundEngine* engine;
 
     // Texture
     SDL_Texture* block_texture;

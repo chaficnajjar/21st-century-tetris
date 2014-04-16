@@ -23,6 +23,10 @@ void PlayState::init(GameEngine* game) {
     tetro        = new Tetromino(rand()%7);       // current tetromino
     next_tetro   = new Tetromino(rand()%7);       // next tetromino
 
+    // Music
+    engine = createIrrKlangDevice();
+    engine->play2D("resources/sounds/tetris.ogg", true);
+
     // Texture
     block_texture = load_texture("resources/sprites/block.bmp", game->renderer);
 
@@ -68,6 +72,9 @@ void PlayState::init(GameEngine* game) {
 }
 
 void PlayState::clean_up(GameEngine* game) {
+    // Sound
+    engine->drop();     // delete engine
+
     SDL_DestroyTexture(font_image_tetris);
     SDL_DestroyTexture(font_image_score_text);
     SDL_DestroyTexture(font_image_score);
