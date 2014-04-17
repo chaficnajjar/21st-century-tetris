@@ -47,11 +47,13 @@ Quit            -> quits
 + ~~Add fonts with SDL ttf~~
 + ~~Convert to OOP~~
 + ~~Add music~~
-+ Test on OS X
 + Add pause option
 + Add fullscreen option 
++ Add power-ups
 + Add tetrimino shadow
++ Test on OS X
 + Add mouse control
++ Add joystic control
 + Add menu screen
 
 # Credits
