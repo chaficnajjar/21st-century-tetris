@@ -9,9 +9,6 @@ class GameState;
 
 class GameEngine {
 public:
-    static const int SCREEN_WIDTH = 500;
-    static const int SCREEN_HEIGHT = 640;
-
     GameEngine();
 
     void clean_up();
@@ -28,11 +25,16 @@ public:
     bool running() { return !exit; };
     void quit() { exit = true; };
 
+    // Screen dimensions
+    int width;
+    int height;
+
     // Window and renderer
     SDL_Window* window;
     SDL_Renderer* renderer;
 
 private:
+
     // Stack of states
     std::vector<GameState*> states;
 

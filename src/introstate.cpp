@@ -98,8 +98,8 @@ void IntroState::render_logo(GameEngine* game) {
 
     int logo_width, logo_height;
     SDL_QueryTexture(logo, nullptr, nullptr, &logo_width, &logo_height);
-    int x = game->SCREEN_WIDTH / 2 - logo_width / 2;
-    int y = game->SCREEN_HEIGHT / 2 - logo_height / 2;
+    int x = game->width / 2 - logo_width / 2;
+    int y = game->height / 2 - logo_height / 2;
 
     render_texture(logo, game->renderer, x, y);
 }

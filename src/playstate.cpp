@@ -446,7 +446,7 @@ void PlayState::render(GameEngine* game) {
 
     // If game is over, display "Game Over!"
     if (game_over)
-        render_texture(font_image_game_over, game->renderer, newgamex1, game->SCREEN_HEIGHT-newgamey1+4*board->BLOCK_WIDTH);
+        render_texture(font_image_game_over, game->renderer, newgamex1, game->height-newgamey1+4*board->BLOCK_WIDTH);
 
     // Create "New Game" button
     int blue[4] = {0, 0, 255, 255};

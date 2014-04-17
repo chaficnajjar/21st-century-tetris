@@ -6,12 +6,16 @@ GameEngine::GameEngine() {
     // Initialize audio, CD-ROM, event handling, file I/O, joystick handling, threading, timers and videos
     SDL_Init(SDL_INIT_EVERYTHING);
 
+    // Screen dimensions
+    width = 500;
+    height = 640;
+
     // Window and renderer
     window = SDL_CreateWindow( "Tetris Unleashed!",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED, 
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT,
+            width,
+            height,
             SDL_WINDOW_SHOWN );
 
     renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );

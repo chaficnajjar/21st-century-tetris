@@ -72,7 +72,7 @@ void MenuState::render(GameEngine* game) {
     int height, width;
     SDL_QueryTexture(font_image_press_start, nullptr, nullptr, &width, &height);
 
-    render_texture(font_image_press_start, game->renderer, (game->SCREEN_WIDTH - width)/2, (game->SCREEN_HEIGHT - height)/2); 
+    render_texture(font_image_press_start, game->renderer, (game->width - width)/2, (game->height - height)/2); 
     // Swap buffers
     SDL_RenderPresent(game->renderer);
 }
