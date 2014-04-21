@@ -47,6 +47,7 @@ Quit            -> quits
 + ~~Add fonts with SDL ttf~~
 + ~~Convert to OOP~~
 + ~~Add music~~
++ ~~Add menu screen~~
 + Add pause option
 + Add fullscreen option 
 + Add power-ups
@@ -54,7 +55,6 @@ Quit            -> quits
 + Test on OS X
 + Add mouse control
 + Add joystic control
-+ Add menu screen
 
 # Credits
 
