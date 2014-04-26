@@ -51,10 +51,10 @@ Quit            -> quits
 + ~~Convert to OOP~~
 + ~~Add music~~
 + ~~Add menu screen~~
++ ~~Add tetrimino shadow~~
 + Add pause option
 + Add fullscreen option 
 + Add power-ups
-+ Add tetrimino shadow
 + Test on OS X
 + Add mouse control
 + Add joystic control

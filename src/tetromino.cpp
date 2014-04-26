@@ -1,6 +1,7 @@
 //  Tetromino class definitions
 
 #include "tetromino.hpp"
+#include "board.hpp"
 
 const int Tetromino::coords_table[7][4][2] = { 
 
@@ -62,3 +63,31 @@ void Tetromino::rotate_right() {
         coords[i][1] = -temp;
     }
 }
+
+void Tetromino::get_shadow(Board *board, int shadow_y[]) {
+
+    // Preserve tetromino state 
+    int temp_y = y;
+    Status temp_status = status;
+
+    while (!has_landed()) {
+        for (int i = 0; i < SIZE; i++)
+            // Lands on tetromino or bottom of the board 
+            if (board->color[get_block_y(i)][get_block_x(i)] != -1 || y >= board->ROWS) {
+                lands();
+                y--;
+                break;
+            }
+        if (!has_landed())
+            y++;
+    }
+
+    // Save the position
+    for (int i = 0; i < SIZE; i++)
+        shadow_y[i] = get_block_y(i); 
+
+    // Return tetromino to initial state
+    y = temp_y;
+    status = temp_status;
+}
+

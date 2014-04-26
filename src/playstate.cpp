@@ -362,8 +362,18 @@ void PlayState::update(GameEngine* game) {
     tetro->movement = tetro->NONE;
 }
 
+void print_array(int color[30][15]) {
+    for (int i = 0; i < 30; i++) {
+        for (int j = 0; j < 15; j++)
+            std::cout << color[i][j] << " "; 
+        std::cout << std::endl;
+    }
+}
+
 // Render result
 void PlayState::render(GameEngine* game) {
+    //print_array(board->color);
+
     // Clear screen
     SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 1);
     SDL_RenderClear(game->renderer);
@@ -404,6 +414,19 @@ void PlayState::render(GameEngine* game) {
         tetro_y = tetro->get_block_y(i)*board->BLOCK_HEIGHT + GAME_OFFSET;
 
         draw_block(game, tetro_x, tetro_y, tetro->type, clips);
+    }
+
+    // Draw shadow tetromino
+    int shadow_y[4];
+    tetro->get_shadow(board, shadow_y);
+    for (int i = 0; i < tetro->SIZE; i++) {
+        int x = tetro->get_block_x(i)*board->BLOCK_WIDTH + GAME_OFFSET;
+        int y = shadow_y[i]*board->BLOCK_WIDTH + GAME_OFFSET;
+
+        // Draw block
+        SDL_SetRenderDrawColor(game->renderer, 180, 180, 180, 255);
+        SDL_Rect shadow_block = {x, y, board->BLOCK_WIDTH, board->BLOCK_HEIGHT};
+        SDL_RenderFillRect(game->renderer, &shadow_block);
     }
 
     if (!game_over)

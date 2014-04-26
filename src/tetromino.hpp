@@ -3,6 +3,8 @@
 #ifndef TETROMINO_HPP
 #define TETROMINO_HPP
 
+class Board;
+
 class Tetromino { 
 
 public:
@@ -35,6 +37,8 @@ public:
 
     void rotate_right();
     void rotate_left();
+
+    void get_shadow(Board *board, int shadow_y[]);
 
 public:
     Status status;
