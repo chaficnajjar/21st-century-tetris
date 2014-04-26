@@ -1,7 +1,10 @@
 Tetris Unleashed!
 ================
 
-Tetris clone written in C++ with SDL 2.0
+Tetris clone written in C++ with SDL 2.0.
+
+![Preview](preview.gif)
+![Screenshot](screenshot.png)
 
 ## Installation
 
