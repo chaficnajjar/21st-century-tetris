@@ -48,13 +48,14 @@ private:
     Tetromino *next_tetro;
 
     // Music
-    ISoundEngine* engine;
+    ISoundEngine* music_engine;
 
     // Texture
     SDL_Texture* block_texture;
 
     // Fonts
     SDL_Color       white;
+    SDL_Texture*    font_image_pause;         
     SDL_Texture*    font_image_tetris;         
     SDL_Texture*    font_image_score_text;
     SDL_Texture*    font_image_score;
@@ -81,6 +82,7 @@ private:
     int newgamey1;
     int newgamey2;
 
+    bool paused;
     bool game_over;         // true when player looses
     bool exit;              // true when player exits game
 };

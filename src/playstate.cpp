@@ -24,8 +24,8 @@ void PlayState::init(GameEngine* game) {
     next_tetro   = new Tetromino(rand()%7);       // next tetromino
 
     // Music
-    engine = createIrrKlangDevice();
-    engine->play2D("resources/sounds/tetris.ogg", true);
+    music_engine = createIrrKlangDevice();
+    music_engine->play2D("resources/sounds/tetris.ogg", true);
 
     // Texture
     block_texture = load_texture("resources/sprites/block.bmp", game->renderer);
@@ -33,6 +33,7 @@ void PlayState::init(GameEngine* game) {
     // Fonts
     TTF_Init();
     white = { 255, 255, 255 };
+    font_image_pause = render_text("Pause", "resources/fonts/bitwise.ttf", white, 16, game->renderer);
     font_image_tetris = render_text("Tetris Unleashed!", "resources/fonts/bitwise.ttf", white, 16, game->renderer);
     font_image_score_text = render_text("Score: ", "resources/fonts/bitwise.ttf", white, 20, game->renderer);
     font_image_score = render_text(std::to_string(board->get_score()), "resources/fonts/bitwise.ttf", white, 20, game->renderer);
@@ -59,6 +60,7 @@ void PlayState::init(GameEngine* game) {
     newgamey1       = board->HEIGHT-4*board->BLOCK_HEIGHT;
     newgamey2       = board->HEIGHT-6*board->BLOCK_HEIGHT;
 
+    paused          = false;
     game_over       = false;
     exit            = false;
 
@@ -73,8 +75,9 @@ void PlayState::init(GameEngine* game) {
 
 void PlayState::clean_up(GameEngine* game) {
     // Sound
-    engine->drop();     // delete engine
+    music_engine->drop();     // delete engine
 
+    SDL_DestroyTexture(font_image_pause);
     SDL_DestroyTexture(font_image_tetris);
     SDL_DestroyTexture(font_image_score_text);
     SDL_DestroyTexture(font_image_score);
@@ -90,11 +93,13 @@ void PlayState::clean_up(GameEngine* game) {
 }
  
 void PlayState::pause() {
-
+    music_engine->setAllSoundsPaused(true);
+    paused = true;
 }
 
 void PlayState::resume() {
-
+    music_engine->setAllSoundsPaused(false);
+    paused = false;
 }
 
 // Restarts game
@@ -121,7 +126,6 @@ void PlayState::reset() {
     newgameup       = false;
     newgamedown     = false;
 }
-
 
 // Get player input
 void PlayState::input(GameEngine *game) {
@@ -157,6 +161,12 @@ void PlayState::input(GameEngine *game) {
                     break;
                 case SDLK_SPACE:
                     tetro->free_fall = true; 
+                    break;
+                case SDLK_p:    // pause/resume
+                    if (paused)
+                        resume();
+                    else
+                        pause();
                     break;
                 default: 
                     break;
@@ -252,6 +262,9 @@ void PlayState::update(GameEngine* game) {
 
     //=== Tetromino has crossed over the top border of the board ===//
     if (game_over)
+        return;
+
+    if (paused)
         return;
 
     //=== Tetromino has landed ===//
@@ -362,26 +375,23 @@ void PlayState::update(GameEngine* game) {
     tetro->movement = tetro->NONE;
 }
 
-void print_array(int color[30][15]) {
-    for (int i = 0; i < 30; i++) {
-        for (int j = 0; j < 15; j++)
-            std::cout << color[i][j] << " "; 
-        std::cout << std::endl;
-    }
-}
-
 // Render result
 void PlayState::render(GameEngine* game) {
-    //print_array(board->color);
 
     // Clear screen
     SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 1);
     SDL_RenderClear(game->renderer);
 
+
+    // Render "Tetris" text
     int x = (next_tetro->x-3)*board->BLOCK_WIDTH; 
     int y = GAME_OFFSET; 
 
     render_texture(font_image_tetris, game->renderer, x, y);
+
+    // Render "Pause" text if game is paused
+    if (paused)
+        render_texture(font_image_pause, game->renderer, x, y+40);
 
     // Render score text
     render_texture(font_image_score_text, game->renderer, x, y + board->BLOCK_WIDTH);

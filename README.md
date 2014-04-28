@@ -29,16 +29,17 @@ To run the game, type `./tetris`.
 
 ## How to play
 
-Up Arrow/W      -> rotates the current tetromino
+Up arrow/w      -> rotates the current tetromino
 
-Left Arrow/A    -> moves the current tetromino to the left
+Left arrow/a    -> moves the current tetromino to the left
 
-Right Arrow/D   -> moves the current tetromino to the right
+Right arrow/d   -> moves the current tetromino to the right
 
-Down Arrow/S    -> speeds up the current tetromino
+Down arrow/s    -> speeds up the current tetromino
 
 Spacebar        -> zooms the current tetromino to the bottom
 
+p               -> pauses/resumes game
 
 New Game        -> starts new game
 
@@ -52,12 +53,14 @@ Quit            -> quits
 + ~~Add music~~
 + ~~Add menu screen~~
 + ~~Add tetrimino shadow~~
-+ Add pause option
++ ~~Add pause option~~
 + Add fullscreen option 
 + Add power-ups
 + Test on OS X
-+ Add mouse control
-+ Add joystic control
++ Add mouse support
++ Add joystic support
++ Create proper UI and UX
++ Add multiplayer support
 
 # Credits
 
