@@ -127,7 +127,7 @@ void PlayState::reset() {
     newgamedown     = false;
 }
 
-// Get player input
+// Handle player input
 void PlayState::input(GameEngine *game) {
 
     // Queuing events
@@ -140,37 +140,47 @@ void PlayState::input(GameEngine *game) {
 
         // Key is pressed
         if (event.type == SDL_KEYDOWN) {
-            switch (event.key.keysym.sym) {
-                case SDLK_ESCAPE: 
-                    exit = true; 
-                    break;
-                case SDLK_a: case SDLK_LEFT:
-                    tetro->movement = tetro->LEFT;
-                    tetro->shift = true;
-                    break;
-                case SDLK_d: case SDLK_RIGHT:
-                    tetro->movement = tetro->RIGHT;
-                    tetro->shift = true;
-                    break;
-                case SDLK_w: case SDLK_UP: 
-                    if(tetro->type != 2)        // type 3 is O-Block
-                        tetro->rotate = true;
-                    break;
-                case SDLK_s: case SDLK_DOWN:
-                    tetro->speed_up = true;
-                    break;
-                case SDLK_SPACE:
-                    tetro->free_fall = true; 
-                    break;
-                case SDLK_p:    // pause/resume
-                    if (paused)
-                        resume();
-                    else
-                        pause();
-                    break;
-                default: 
-                    break;
+
+            // Pause/Resume
+            if (event.key.keysym.sym == SDLK_p) {
+                if(paused)
+                    resume();
+                else
+                    pause();
             }
+
+            if (!paused)
+                switch (event.key.keysym.sym) {
+                    case SDLK_p:
+                        if (paused)
+                            resume();
+                        else
+                            pause();
+                        break;
+                    case SDLK_ESCAPE: 
+                        exit = true; 
+                        break;
+                    case SDLK_a: case SDLK_LEFT:
+                        tetro->movement = tetro->LEFT;
+                        tetro->shift = true;
+                        break;
+                    case SDLK_d: case SDLK_RIGHT:
+                        tetro->movement = tetro->RIGHT;
+                        tetro->shift = true;
+                        break;
+                    case SDLK_w: case SDLK_UP: 
+                        if(tetro->type != 2)        // type 3 is O-Block
+                            tetro->rotate = true;
+                        break;
+                    case SDLK_s: case SDLK_DOWN:
+                        tetro->speed_up = true;
+                        break;
+                    case SDLK_SPACE:
+                        tetro->free_fall = true; 
+                        break;
+                    default: 
+                        break;
+                }
         }
 
         // Key is released
