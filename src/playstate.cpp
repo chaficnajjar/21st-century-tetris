@@ -151,12 +151,6 @@ void PlayState::input(GameEngine *game) {
 
             if (!paused)
                 switch (event.key.keysym.sym) {
-                    case SDLK_p:
-                        if (paused)
-                            resume();
-                        else
-                            pause();
-                        break;
                     case SDLK_ESCAPE: 
                         exit = true; 
                         break;
