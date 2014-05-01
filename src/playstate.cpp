@@ -434,6 +434,8 @@ void PlayState::render(GameEngine* game) {
     int shadow_y[4];
     tetro->get_shadow(board, shadow_y);
     for (int i = 0; i < tetro->SIZE; i++) {
+        if (shadow_y[i] < 0)
+            break;
         int x = tetro->get_block_x(i)*board->BLOCK_WIDTH + GAME_OFFSET;
         int y = shadow_y[i]*board->BLOCK_WIDTH + GAME_OFFSET;
 
