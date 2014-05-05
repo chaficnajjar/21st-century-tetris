@@ -122,6 +122,10 @@ void PlayState::reset() {
     tetro->set_position(int(board->COLS/2), 0);
     next_tetro->set_position(board->COLS+5, int(0.3*board->ROWS));
 
+    // Restart music
+    music_engine->stopAllSounds();
+    music_engine->play2D("resources/sounds/tetris.ogg", true);
+
     game_over       = false;
     newgameup       = false;
     newgamedown     = false;
