@@ -153,7 +153,7 @@ void PlayState::input(GameEngine *game) {
                     pause();
             }
 
-            if (!paused)
+            if (!paused && !tetro->free_fall)
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE: 
                         exit = true; 
