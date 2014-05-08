@@ -73,7 +73,7 @@ void Tetromino::get_shadow(Board *board, int shadow_y[]) {
     while (!has_landed()) {
         for (int i = 0; i < SIZE; i++)
             // Lands on tetromino or bottom of the board 
-            if (board->color[get_block_y(i)][get_block_x(i)] != -1 || y >= board->ROWS) {
+            if (get_block_y(i) == board->ROWS || board->color[get_block_y(i)][get_block_x(i)] != -1) {
                 lands();
                 y--;
                 break;
