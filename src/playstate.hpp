@@ -55,6 +55,14 @@ private:
 
     // Fonts
     SDL_Color       white;
+    TTF_Font*       font_pause;
+    TTF_Font*       font_tetris;
+    TTF_Font*       font_score_text;
+    TTF_Font*       font_score;
+    TTF_Font*       font_new_game;
+    TTF_Font*       font_quit;
+    TTF_Font*       font_game_over;
+
     SDL_Texture*    font_image_pause;         
     SDL_Texture*    font_image_tetris;         
     SDL_Texture*    font_image_score_text;

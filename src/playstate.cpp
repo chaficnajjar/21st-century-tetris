@@ -25,7 +25,7 @@ void PlayState::init(GameEngine* game) {
 
     // Music
     music_engine = createIrrKlangDevice();
-    music_engine->play2D("resources/sounds/tetris.ogg", true);
+    music_engine->play2D("resources/sounds/Dubmood-Tetris.ogg", true);
 
     // Texture
     block_texture = load_texture("resources/sprites/block.bmp", game->renderer);
@@ -33,13 +33,21 @@ void PlayState::init(GameEngine* game) {
     // Fonts
     TTF_Init();
     white = { 255, 255, 255 };
-    font_image_pause = render_text("Pause", "resources/fonts/bitwise.ttf", white, 16, game->renderer);
-    font_image_tetris = render_text("Tetris Unleashed!", "resources/fonts/bitwise.ttf", white, 16, game->renderer);
-    font_image_score_text = render_text("Score: ", "resources/fonts/bitwise.ttf", white, 20, game->renderer);
-    font_image_score = render_text(std::to_string(board->get_score()), "resources/fonts/bitwise.ttf", white, 20, game->renderer);
-    font_image_new_game = render_text("New game", "resources/fonts/bitwise.ttf", white, 20, game->renderer);
-    font_image_quit = render_text("Quit", "resources/fonts/bitwise.ttf", white, 20, game->renderer);
-    font_image_game_over = render_text("Game over!", "resources/fonts/bitwise.ttf", white, 16, game->renderer);
+    font_pause = TTF_OpenFont("resources/fonts/bitwise.ttf", 16);
+    font_tetris = TTF_OpenFont("resources/fonts/bitwise.ttf", 16);
+    font_score_text = TTF_OpenFont("resources/fonts/bitwise.ttf", 20);
+    font_score = TTF_OpenFont("resources/fonts/bitwise.ttf", 20);
+    font_new_game = TTF_OpenFont("resources/fonts/bitwise.ttf", 20);
+    font_quit = TTF_OpenFont("resources/fonts/bitwise.ttf", 20);
+    font_game_over = TTF_OpenFont("resources/fonts/bitwise.ttf", 16);
+
+    font_image_pause = render_text("Pause", white, font_pause, game->renderer);
+    font_image_tetris = render_text("Tetris Unleashed!", white, font_tetris, game->renderer);
+    font_image_score_text = render_text("Score: ", white, font_score_text, game->renderer);
+    font_image_score = render_text(std::to_string(board->get_score()), white, font_score, game->renderer);
+    font_image_new_game = render_text("New game", white, font_new_game, game->renderer);
+    font_image_quit = render_text("Quit", white, font_quit, game->renderer);
+    font_image_game_over = render_text("Game over!", white, font_game_over, game->renderer);
 
     // Frame rate
     acceleration    = 0.005f;
@@ -74,8 +82,16 @@ void PlayState::init(GameEngine* game) {
 }
 
 void PlayState::clean_up(GameEngine* game) {
-    // Sound
-    music_engine->drop();     // delete engine
+    // Delete music engine
+    music_engine->drop();
+
+    TTF_CloseFont(font_pause);
+    TTF_CloseFont(font_tetris);
+    TTF_CloseFont(font_score_text);
+    TTF_CloseFont(font_score);
+    TTF_CloseFont(font_new_game);
+    TTF_CloseFont(font_quit);
+    TTF_CloseFont(font_game_over);
 
     SDL_DestroyTexture(font_image_pause);
     SDL_DestroyTexture(font_image_tetris);
@@ -124,7 +140,7 @@ void PlayState::reset() {
 
     // Restart music
     music_engine->stopAllSounds();
-    music_engine->play2D("resources/sounds/tetris.ogg", true);
+    music_engine->play2D("resources/sounds/Dubmood-Tetris.ogg", true);
 
     game_over       = false;
     newgameup       = false;
@@ -406,7 +422,7 @@ void PlayState::render(GameEngine* game) {
 
     // Render score
     if (board->render_score) {
-        font_image_score = render_text(std::to_string(board->get_score()), "resources/fonts/bitwise.ttf", white, 20, game->renderer);
+        font_image_score = render_text(std::to_string(board->get_score()), white, font_score, game->renderer);
         board->render_score = false;
     }
     render_texture(font_image_score, game->renderer, x + 60, y + board->BLOCK_WIDTH);

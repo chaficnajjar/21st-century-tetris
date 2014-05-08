@@ -20,15 +20,12 @@ void render_texture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect 
     render_texture(tex, ren, dst, clip);
 }
 
-SDL_Texture* render_text(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer) {
-    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
-
+SDL_Texture* render_text(const std::string &message, SDL_Color color, TTF_Font *font, SDL_Renderer *renderer) {
     SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
 
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
 
     SDL_FreeSurface(surf);
-    TTF_CloseFont(font);
     return texture;
 }
 
