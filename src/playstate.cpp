@@ -145,6 +145,8 @@ void PlayState::reset() {
     game_over       = false;
     newgameup       = false;
     newgamedown     = false;
+
+    paused = false;
 }
 
 // Handle player input
