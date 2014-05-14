@@ -31,24 +31,25 @@ protected:
 private:
     static MenuState m_menustate;
 
-    bool exit;
     bool play;
+    //bool credits;
+    bool exit;
 
     // Font textures
     SDL_Color       white;
     TTF_Font*       font_title;
     TTF_Font*       font_play;
-    TTF_Font*       font_options;
+    //TTF_Font*       font_credits;
     TTF_Font*       font_quit;
     SDL_Texture*    font_image_title;
     SDL_Texture*    font_image_play;         
     SDL_Texture*    font_image_quit;
-    SDL_Texture*    font_image_options;
+    //SDL_Texture*    font_image_credits;
 
     // Text position
     int title_width, title_height;
     int play_width, play_height;
-    int options_width, options_height;
+    //int credits_width, credits_height;
     int quit_width, quit_height;
 
     // Currently selected menu item

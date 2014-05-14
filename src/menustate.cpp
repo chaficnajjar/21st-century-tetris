@@ -6,8 +6,9 @@
 MenuState MenuState::m_menustate;
 
 void MenuState::init(GameEngine* game) {
-    exit = false;
     play = false;
+    //credits = false;
+    exit = false;
 
     // Inialize fonts and font color
     TTF_Init();
@@ -16,22 +17,22 @@ void MenuState::init(GameEngine* game) {
     // Load fonts and font textures
     font_title = TTF_OpenFont("resources/fonts/Basica.ttf", 32);
     font_play = TTF_OpenFont("resources/fonts/Basica.ttf", 16);
-    font_options = TTF_OpenFont("resources/fonts/Basica.ttf", 16);
+    //font_credits = TTF_OpenFont("resources/fonts/Basica.ttf", 16);
     font_quit = TTF_OpenFont("resources/fonts/Basica.ttf", 16);
 
     font_image_title = render_text("Tetris", white, font_title, game->renderer);
     font_image_play = render_text("Play", white, font_play, game->renderer);
-    font_image_options = render_text("Options", white, font_options, game->renderer);
+    //font_image_credits = render_text("credits", white, font_credits, game->renderer);
     font_image_quit = render_text("Quit", white, font_quit, game->renderer);
 
     // Text position
     SDL_QueryTexture(font_image_title, nullptr, nullptr, &title_width, &title_height);
     SDL_QueryTexture(font_image_play, nullptr, nullptr, &play_width, &play_height);
-    SDL_QueryTexture(font_image_options, nullptr, nullptr, &options_width, &options_height);
+    //SDL_QueryTexture(font_image_credits, nullptr, nullptr, &credits_width, &credits_height);
     SDL_QueryTexture(font_image_quit, nullptr, nullptr, &quit_width, &quit_height);
 
     currently_selected = 0;
-    items = 3;
+    items = 2;
 }
 
 void MenuState::clean_up(GameEngine* game) {
@@ -39,13 +40,13 @@ void MenuState::clean_up(GameEngine* game) {
     // Close all fonts
     TTF_CloseFont(font_title);
     TTF_CloseFont(font_play);
-    TTF_CloseFont(font_options);
+    //TTF_CloseFont(font_credits);
     TTF_CloseFont(font_quit);
 
     // Destroy all textures
     SDL_DestroyTexture(font_image_title);
     SDL_DestroyTexture(font_image_play);
-    SDL_DestroyTexture(font_image_options);
+    //SDL_DestroyTexture(font_image_credits);
     SDL_DestroyTexture(font_image_quit);
 
     IMG_Quit();
@@ -86,7 +87,9 @@ void MenuState::input(GameEngine* game) {
                 case SDLK_RETURN:
                     if (currently_selected == 0)
                         play = true; 
-                    if (currently_selected == 2)
+                    //else if (currently_selected == 1)
+                        //credits = true;
+                    else if (currently_selected == 1)
                         exit = true;
                     break;
                 default: 
@@ -97,11 +100,10 @@ void MenuState::input(GameEngine* game) {
 }
 
 void MenuState::update(GameEngine* game) {
-    if (exit)
-        game->quit();
-
     if (play)
         game->push_state(PlayState::Instance());
+    else if (exit)
+        game->quit();
 }
 
 void MenuState::render(GameEngine* game) {
@@ -122,30 +124,30 @@ void MenuState::render(GameEngine* game) {
         TTF_SetFontStyle(font_play, TTF_STYLE_UNDERLINE);
         font_image_play = render_text("Play", white, font_play, game->renderer);
     }
+    //else if (currently_selected == 1) {
+        //TTF_SetFontStyle(font_credits, TTF_STYLE_UNDERLINE);
+        //font_image_credits = render_text("credits", white, font_credits, game->renderer);
+    //}
     else if (currently_selected == 1) {
-        TTF_SetFontStyle(font_options, TTF_STYLE_UNDERLINE);
-        font_image_options = render_text("Options", white, font_options, game->renderer);
-    }
-    else if (currently_selected == 2) {
         TTF_SetFontStyle(font_quit, TTF_STYLE_UNDERLINE);
         font_image_quit = render_text("Quit", white, font_quit, game->renderer);
     }
 
     // Draw menu items (centered)
     render_texture(font_image_play, game->renderer, (game->width - play_width)/2, (game->height - play_height)/2); 
-    render_texture(font_image_options, game->renderer, (game->width - options_width)/2, (game->height - options_height)/2+space); 
-    render_texture(font_image_quit, game->renderer, (game->width - quit_width)/2, (game->height - quit_height)/2+space*2); 
+    //render_texture(font_image_credits, game->renderer, (game->width - credits_width)/2, (game->height - credits_height)/2+space); 
+    render_texture(font_image_quit, game->renderer, (game->width - quit_width)/2, (game->height - quit_height)/2+space); 
 
     // Remove underline again
     if (currently_selected == 0) {
         TTF_SetFontStyle(font_play, TTF_STYLE_NORMAL);
         font_image_play = render_text("Play", white, font_play, game->renderer);
     }
+    //else if (currently_selected == 1) {
+        //TTF_SetFontStyle(font_credits, TTF_STYLE_NORMAL);
+        //font_image_credits = render_text("credits", white, font_credits, game->renderer);
+    //}
     else if (currently_selected == 1) {
-        TTF_SetFontStyle(font_options, TTF_STYLE_NORMAL);
-        font_image_options = render_text("Options", white, font_options, game->renderer);
-    }
-    else if (currently_selected == 2) {
         TTF_SetFontStyle(font_quit, TTF_STYLE_NORMAL);
         font_image_quit = render_text("Quit", white, font_quit, game->renderer);
     }
