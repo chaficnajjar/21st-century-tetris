@@ -355,22 +355,24 @@ void PlayState::update(GameEngine* game) {
         if (x < 0 || x >= board->COLS) {
 
             // Because of rotation
-            if (tetro->rotate) 
+            if (tetro->rotate)
                 tetro->rotate_right();       // neutralize the left rotation 
 
             // Because of translation
-            if (tetro->shift) 
+            if (tetro->shift)
                 tetro->x -= tetro->movement;        // neutralize shift
+
+            break;
         }
 
         // Block touches ground
-        if (y >= board->ROWS) {
+        else if (y >= board->ROWS) {
             tetro->lands();
             tetro->set_block_y(i, board->ROWS-1); // change the value of Y so that block(s) of the (old) tetromino is/are above the blue line
         }
 
         // Block is on the board
-        else if (y >= 0) 
+        else if (y >= 0) {
 
             // Block touched another block
             if (board->color[y][x] != -1) {
@@ -383,6 +385,8 @@ void PlayState::update(GameEngine* game) {
                     // Tetromino is shifted into another block
                     if (tetro->shift)
                         tetro->x -= tetro->movement;           // neutralize
+
+                    break;
                 }
 
                 // Block falls into another block
@@ -392,6 +396,7 @@ void PlayState::update(GameEngine* game) {
                 }
 
             }
+        }
     }
 
     board->delete_full_rows();
