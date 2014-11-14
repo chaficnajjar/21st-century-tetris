@@ -10,18 +10,17 @@ Tetris clone written in C++ with SDL 2.0.
 
 ### Ubuntu
 
-You will need to download and install: 
+1. Download and install required libraries;
+    + [SDL 2.0](http://www.libsdl.org/)
+    + [SDL ttf 2.0](http://www.libsdl.org/projects/SDL_ttf/)
+    + [SDL image 2.0](https://www.libsdl.org/projects/SDL_image/)
 
-+ [SDL 2.0](http://www.libsdl.org/)
-+ [SDL ttf 2.0](http://www.libsdl.org/projects/SDL_ttf/)
-+ [SDL image 2.0](https://www.libsdl.org/projects/SDL_image/)
-
-Then, just type `make` to compile.
+2. Type `make` to compile.
 
 ### OS X
 
-1. Install [Homebrew](http://brew.sh/).
-2. Type `make` to install libraries and compile.
+1. Install required libraries through [Homebrew](http://brew.sh/): `brew install sdl2 sdl2_ttf sdl2_mixer`
+2. Type `make` to compile.
 
 ## Run the game
 
@@ -45,24 +44,7 @@ New Game        -> starts new game
 
 Quit            -> quits
 
-## To-do
-
-+ ~~Update code to SDL2~~
-+ ~~Add fonts with SDL ttf~~
-+ ~~Convert to OOP~~
-+ ~~Add music~~
-+ ~~Add menu screen~~
-+ ~~Add tetrimino shadow~~
-+ ~~Add pause option~~
-+ Add fullscreen option 
-+ Add power-ups
-+ Test on OS X
-+ Add mouse support
-+ Add joystic support
-+ Create proper UI and UX
-+ Add multiplayer support
-
-# Credits
+## Credits
 
 Chafic Najjar - chafic.najjar@gmail.com
 
