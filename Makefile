@@ -1,13 +1,19 @@
-# Use bash not sh
-SHELL := /bin/bash
+SHELL 		:= /bin/bash	# Use bash instead of sh
 
-GCC = g++
-SOURCE = src/main.cpp src/board.cpp src/tetromino.cpp src/introstate.cpp src/menustate.cpp src/playstate.cpp src/game_engine.cpp src/utilities.cpp
-FLAGS = -Wall -g -std=c++0x -lSDL2 -lSDL2_ttf -lSDL2_image `sdl2-config --cflags --libs` -I"irrKlang-1.4.0/include" ./irrKlang-1.4.0/lib/libIrrKlang.so -pthread
-BINARY = tetris
+BINARY 		:= tetris
+SRCS		:= $(wildcard src/*.cpp)
+OBJS		:= ${SRCS:.cpp=.o}
 
-all: 
-	$(GCC) $(SOURCE) $(FLAGS) -o $(BINARY)
+DEBUG		:= -g
+
+CPPFLAGS	:= `sdl2-config --cflags` -IirrKlang-1.4.0/include
+CXXFLAGS	:= -Wall -std=c++0x
+LDFLAGS		:= `sdl2-config --libs` -lSDL2 -lSDL2_ttf -lSDL2_image ./irrKlang-1.4.0/lib/libIrrKlang.so
+
+all: $(BINARY)
+
+$(BINARY): $(OBJS)
+	$(LINK.cc) $(OBJS) -o $(BINARY) $(LDFLAGS)
 
 clean:
-	@rm $(BINARY)
+	$(RM) src/*.o $(BINARY)
