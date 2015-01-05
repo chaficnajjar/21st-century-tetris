@@ -3,8 +3,8 @@ Tetris Unleashed!
 
 Tetris clone written in C++ with SDL 2.0.
 
-![Preview](preview.gif)
-![Screenshot](screenshot.png)
+![Preview](https://cloud.githubusercontent.com/assets/1498164/5609348/184229dc-94a7-11e4-8979-4bac0b527aa2.gif)
+![Screenshot](https://cloud.githubusercontent.com/assets/1498164/5609349/1850910c-94a7-11e4-9af4-85be530b130e.png)
 
 ## Installation
 
