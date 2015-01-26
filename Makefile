@@ -1,19 +1,32 @@
-SHELL 		:= /bin/bash	# Use bash instead of sh
+BINARY 			:= tetris
+SRCS			:= $(wildcard src/*.cpp)
+OBJS			:= ${SRCS:.cpp=.o}
 
-BINARY 		:= tetris
-SRCS		:= $(wildcard src/*.cpp)
-OBJS		:= ${SRCS:.cpp=.o}
+DEBUG			:= -g
 
-DEBUG		:= -g
+SDL_INCLUDE		:= `sdl2-config --cflags` -IirrKlang-1.4.0/include
+SDL_LIB			:= `sdl2-config --libs` -lSDL2_ttf -lSDL2_image ./irrKlang-1.4.0/lib/libIrrKlang.so
 
-CPPFLAGS	:= `sdl2-config --cflags` -IirrKlang-1.4.0/include
-CXXFLAGS	:= -Wall -std=c++0x
-LDFLAGS		:= `sdl2-config --libs` -lSDL2 -lSDL2_ttf -lSDL2_image ./irrKlang-1.4.0/lib/libIrrKlang.so
+CPPFLAGS		:= $(SDL_INCLUDE) 
+CXXFLAGS		:= $(DEBUG) -Wall -std=c++0x
+LDFLAGS			:= $(SDL_LIB)
+
+.PHONY: all clean
 
 all: $(BINARY)
 
 $(BINARY): $(OBJS)
 	$(LINK.cc) $(OBJS) -o $(BINARY) $(LDFLAGS)
 
+depend: .depend
+
+.depend: $(SRCS)
+	@- $(RM) .depend
+	@- $(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $^ | sed -r 's|^([^ ])|src/\1|' > .depend;
+
+-include .depend
+
 clean:
-	$(RM) src/*.o $(BINARY)
+	@- $(RM) $(BINARY)
+	@- $(RM) $(OBJS)
+	@- $(RM) .depend

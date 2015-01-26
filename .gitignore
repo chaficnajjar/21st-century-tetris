@@ -1,3 +1,4 @@
 tetris
 todo
 src/*.o
+.depend
