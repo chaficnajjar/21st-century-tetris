@@ -1,10 +1,10 @@
 BINARY 			:= tetris
-SRCS			:= $(wildcard src/*.cpp)
-OBJS			:= $(SRCS:.cpp=.o)
+SRCS			:= $(wildcard src/*.cc)
+OBJS			:= $(SRCS:.cc=.o)
 
 DEBUG			:= -g
 
-SDL_INCLUDE		:= `sdl2-config --cflags` -IirrKlang-1.4.0/include
+SDL_INCLUDE		:= `sdl2-config --cflags` -IirrKlang-1.4.0/include -I.
 SDL_LIB			:= `sdl2-config --libs` -lSDL2_ttf -lSDL2_image ./irrKlang-1.4.0/lib/libIrrKlang.so
 
 CPPFLAGS		+= $(SDL_INCLUDE) 

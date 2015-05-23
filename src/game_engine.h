@@ -1,14 +1,16 @@
+// Copyright [2015] <Chafic Najjar>
 
-#ifndef TETRIS_HPP
-#define TETRIS_HPP
+#ifndef SRC_GAME_ENGINE_H_
+#define SRC_GAME_ENGINE_H_
+
+#include <SDL2/SDL.h>
 
 #include <vector>
-#include <SDL2/SDL.h>
 
 class GameState;
 
 class GameEngine {
-public:
+ public:
     GameEngine();
 
     void clean_up();
@@ -22,23 +24,22 @@ public:
     void update();
     void render();
 
-    bool running() { return !exit; };
-    void quit() { exit = true; };
+    bool running() { return !exit; }
+    void quit() { exit = true; }
 
-    // Screen dimensions
+    // Screen dimensions.
     int width;
     int height;
 
-    // Window and renderer
+    // Window and renderer.
     SDL_Window* window;
     SDL_Renderer* renderer;
 
-private:
-
-    // Stack of states
+ private:
+    // Stack of states.
     std::vector<GameState*> states;
 
     bool exit;
 };
 
-#endif
+#endif  // SRC_GAME_ENGINE_H_

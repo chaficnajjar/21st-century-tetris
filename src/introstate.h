@@ -1,13 +1,15 @@
+// Copyright [2015] <Chafic Najjar>
 
-#ifndef INTROSTATE_HPP
-#define INTROSTATE_HPP
+#ifndef SRC_INTROSTATE_H_
+#define SRC_INTROSTATE_H_
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "gamestate.hpp"
+
+#include "src/gamestate.h"
 
 class IntroState : public GameState {
-public:
+ public:
     void init(GameEngine* game);
     void clean_up(GameEngine* game);
 
@@ -23,10 +25,10 @@ public:
 
     void render_logo(GameEngine* game);
 
-protected:
+ protected:
     IntroState() { }
 
-private:
+ private:
     static IntroState m_introstate;
 
     bool exit;
@@ -38,4 +40,4 @@ private:
     Status logo_status;
 };
 
-#endif
+#endif  // SRC_INTROSTATE_H_

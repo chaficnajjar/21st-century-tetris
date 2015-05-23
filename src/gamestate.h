@@ -1,14 +1,15 @@
+// Copyright [2015] <Chafic Najjar>
 
-#ifndef GAME_STATE_HPP
-#define GAME_STATE_HPP
+#ifndef SRC_GAMESTATE_H_
+#define SRC_GAMESTATE_H_
 
-#include "game_engine.hpp"
+#include "src/game_engine.h"
 
 class GameState {
-public:
+ public:
     virtual void init(GameEngine* game) = 0;
     virtual void clean_up(GameEngine* game) = 0;
-    
+
     virtual void pause() = 0;
     virtual void resume() = 0;
 
@@ -20,8 +21,8 @@ public:
         game->change_state(state);
     }
 
-protected:
+ protected:
     GameState() { }
 };
 
-#endif
+#endif  // SRC_GAMESTATE_H_
