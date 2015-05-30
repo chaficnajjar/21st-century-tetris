@@ -48,8 +48,9 @@ Quit            -> quits
 
 If you would like to contribute, please make sure you follow the [Google C++ Style Guide](http://google-styleguide.googlecode.com/svn/trunk/cppguide.html).
 
-## License
+## License and Credits
 
+```
 The MIT License (MIT)
 
 Copyright (c) 2014 Chafic Najjar
@@ -70,10 +71,9 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
 
-## Credits
-
-Chafic Najjar - chafic.najjar@gmail.com
+Chafic Najjar - chafic.najjar@gmail.com.
 
 [irrKlang](http://www.ambiera.com/irrklang/index.html) for sound.
 
