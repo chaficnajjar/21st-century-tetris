@@ -1,30 +1,44 @@
 Tetris Unleashed!
-================
+=================
 
 Tetris clone written in C++ with SDL 2.0.
 
 ![Preview](https://cloud.githubusercontent.com/assets/1498164/5609348/184229dc-94a7-11e4-8979-4bac0b527aa2.gif)
 ![Screenshot](https://cloud.githubusercontent.com/assets/1498164/5609349/1850910c-94a7-11e4-9af4-85be530b130e.png)
 
-## Installation
+## Dependencies
+
+You will need:
+
++ [SDL 2.0](https://www.libsdl.org/hg.php)
++ [SDL TTF 2.0](https://www.libsdl.org/projects/SDL_ttf/)
++ [SDL image 2.0](https://www.libsdl.org/projects/SDL_image/)
 
 ### Ubuntu
 
-1. Download and install required libraries;
-    + [SDL 2.0](http://www.libsdl.org/)
-    + [SDL ttf 2.0](http://www.libsdl.org/projects/SDL_ttf/)
-    + [SDL image 2.0](https://www.libsdl.org/projects/SDL_image/)
+Install all dependencies on Ubuntu 14.04 and above:
 
-2. Type `make` to compile.
+`sudo apt-get install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev`
 
 ### OS X
 
-1. Install required libraries through [Homebrew](http://brew.sh/): `brew install sdl2 sdl2_ttf sdl2_mixer`
-2. Type `make` to compile.
+Install the required build dependencies using [Homebrew](http://brew.sh/):
+
+`brew install sdl2 sdl2_ttf sdl2_image`
+
+## Get Source and Build
+
+```
+git clone https://github.com/chaficnajjar/tetris-unleashed.git
+cd tetris-unleashed
+make
+```
 
 ## Run the game
 
-To run the game, type `./tetris`.
+To run the game:
+
+`./tetris`.
 
 ## How to play
 
