@@ -20,7 +20,7 @@ $(BINARY): $(OBJS)
 
 .depend: $(SRCS)
 	@- $(RM) .depend
-	@- $(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $^ | sed -r 's|^([^ ])|src/\1|' > .depend;
+	@- $(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $^ | sed -E 's|^([^ ])|src/\1|' > .depend;
 
 -include .depend
 
