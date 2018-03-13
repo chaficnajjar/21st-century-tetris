@@ -1,7 +1,7 @@
 Tetris Unleashed!
 =================
 
-Tetris clone written in C++ with SDL 2.0.
+Tetris clone for Linux written in C++ with SDL 2.0.
 
 ![Preview](https://cloud.githubusercontent.com/assets/1498164/5609348/184229dc-94a7-11e4-8979-4bac0b527aa2.gif)
 ![Screenshot](https://cloud.githubusercontent.com/assets/1498164/5609349/1850910c-94a7-11e4-9af4-85be530b130e.png)
@@ -19,12 +19,6 @@ You will need:
 Install all dependencies on Ubuntu 14.04 and above:
 
 `sudo apt-get install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev`
-
-### OS X
-
-Install the required build dependencies using [Homebrew](http://brew.sh/):
-
-`brew install sdl2 sdl2_ttf sdl2_image`
 
 ## Get Source and Build
 
